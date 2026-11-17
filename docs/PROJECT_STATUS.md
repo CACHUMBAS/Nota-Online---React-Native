@@ -1,8 +1,8 @@
 # Estado del proyecto
 Actualizado: 2026-11-17
-Rama actual: feat/native-classroom (creada desde feat/secure-voting, de la que depende)
+Rama actual: docs/delivery (apilada: chore/native-foundation → feat/secure-voting → feat/native-classroom → docs/delivery)
 Último commit: ver `git log --oneline -1`
-Ramas en GitHub: `chore/native-foundation` (d414da7) y `feat/secure-voting` (00b4d63), verificadas con `git ls-remote`. `feat/native-classroom`: comprobar con `git ls-remote --heads origin` (un commit local no equivale a estar subido).
+Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `chore/native-foundation` d414da7, `feat/secure-voting` 00b4d63, `feat/native-classroom` 80d4406, `docs/delivery` 9d99e1f (los commits posteriores a este archivo se comprueban con ese mismo comando; un commit local no equivale a estar subido).
 
 ## Requisitos y permisos confirmados
 - React Native obligatorio, entrega en ≤ 2 días; prioridad: estructura por componentes, claridad y funcionamiento.
@@ -25,7 +25,8 @@ Ramas en GitHub: `chore/native-foundation` (d414da7) y `feat/secure-voting` (00b
 
 ## No terminado
 - Prueba en Android (Expo Go) con dos dispositivos o instancias; APK solo si se exige.
-- README final, guion de demostración, revisión de accesibilidad en dispositivo.
+- README y guion de demostración (`docs/DEMO.md`) escritos, pero el guion **nunca se ha ejecutado** en un móvil; revisarlos tras la primera prueba real. Revisión de accesibilidad en dispositivo pendiente.
+- Decidir si se cierra el registro abierto de Supabase (no se ha podido confirmar que no bloquee la entrada anónima) o se añade una lista de profesores autorizados.
 - Integración de ramas (PR / merge a `main`): no se ha hecho; `main` no existe aún en el remoto.
 
 ## Bloqueos que requieren al usuario
@@ -35,7 +36,7 @@ Ramas en GitHub: `chore/native-foundation` (d414da7) y `feat/secure-voting` (00b
 
 ## Siguiente paso concreto
 - Con el Supabase creado: aplicar las dos migraciones, crear la cuenta de profesor y probar el recorrido completo (profesor ↔ alumno) con `npx expo start`.
-- Sin Supabase todavía: README y guion de demostración (rama `docs/delivery`).
+- Tras la primera prueba real: corregir lo que falle, actualizar README/DEMO/este archivo y abrir los PR para integrar las ramas en `main` (no hecho; `main` no existe en el remoto).
 
 ## Limitaciones conocidas
 - Un voto por identidad anónima no garantiza un voto por persona (borrar datos de la app o cambiar de identidad permite votar otra vez).
