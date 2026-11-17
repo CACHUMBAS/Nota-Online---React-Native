@@ -134,6 +134,29 @@ test('la base de datos impone sola la unicidad, el rango y la coherencia entre s
   }
 });
 
+test('list_classrooms devuelve solo las sesiones propias y no está disponible para alumnos', async () => {
+  const t = await createDb();
+  try {
+    await t.as(IDS.teacherA, false);
+    assert.deepEqual(await t.call<ClassroomSession[]>('list_classrooms'), []);
+    await t.call('create_classroom', ['Primera']);
+    await t.call('create_classroom', ['Segunda']);
+    const own = await t.call<ClassroomSession[]>('list_classrooms');
+    assert.deepEqual(own.map((room) => room.title).sort(), ['Primera', 'Segunda']);
+
+    await t.as(IDS.teacherB, false);
+    assert.deepEqual(await t.call<ClassroomSession[]>('list_classrooms'), []);
+
+    await t.as(IDS.studentOne, true);
+    await assert.rejects(t.call('list_classrooms'), /teacher_required/);
+    await t.asOwner();
+    await t.db.exec('SET ROLE anon');
+    await assert.rejects(t.call('list_classrooms'), /permission denied/);
+  } finally {
+    await t.db.close();
+  }
+});
+
 test('acceso a sesiones: código, alias, propietario y sesión cerrada', async () => {
   const t = await createDb();
   try {
