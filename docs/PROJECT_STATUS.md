@@ -15,11 +15,17 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
 - Migraciones `001` (tablas, RPC, permisos) y `002` (`list_classrooms`) aplicadas sobre PostgreSQL real en memoria (PGlite).
 - `npm run export:android`: el bundle se genera (935 módulos, `.hbc` de 2,7 MB). Eso demuestra que Metro resuelve la app, **no** que funcione en un móvil.
 - `npx expo install --check`: dependencias compatibles con el SDK 58.
+- **Contra el Supabase real** (2026-11-17, con la clave publishable por la API REST, sin la app):
+  - Las 8 funciones existen y rechazan a quien no tiene sesión (HTTP 401 `permission denied`): migraciones 001 y 002 aplicadas.
+  - Inicios de sesión anónimos activados (estaban desactivados; los activó Claude en el panel con permiso del usuario).
+  - Una sesión anónima real llega con `is_anonymous=true`: `create_classroom` y `list_classrooms` dan `teacher_required`, `join_classroom` con un código inexistente da `session_not_found` y `classroom_snapshot` de una sesión ajena da `access_denied`.
+  - Esas pruebas crearon 2 usuarios anónimos de prueba en el proyecto (inofensivos).
+  - NO probado todavía: un profesor real, crear sesión, votar, cerrar (el recorrido completo) ni la concurrencia.
 
 ## Implementado sin verificar
 - **Toda la interfaz** (pantallas, navegación, hooks de sondeo, servicios): escrita y compilada, **nunca ejecutada** en Android ni en emulador.
-- Cliente Supabase: nunca ha hablado con un Supabase real (el proyecto aún no existe). Sin `.env` la app muestra la pantalla «Falta conectar el servidor».
-- Las migraciones no se han ejecutado en Supabase real; PGlite simula `auth.uid()`/`auth.jwt()`.
+- La **app** (cliente) todavía no se ha ejecutado contra Supabase: el `.env` está creado (proyecto NotaOnline-ReactNative) y Expo arranca leyéndolo, pero falta abrirla en un móvil.
+- Cuenta de profesor: creada por el usuario, no verificada (no se tiene su contraseña).
 - Carreras reales (voto frente a cierre): razonadas por diseño, no probadas con concurrencia.
 - Reanudación al reabrir la app, sondeo con la app en segundo plano y errores de red en dispositivo: sin comprobar.
 
@@ -30,8 +36,8 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
 - Integración de ramas (PR / merge a `main`): no se ha hecho; `main` no existe aún en el remoto.
 
 ## Bloqueos que requieren al usuario
-1. Crear el proyecto Supabase dedicado (`docs/SUPABASE_SETUP.md`) y rellenar `.env`.
-2. Probar en un móvil Android con Expo Go y decirme qué falla.
+1. (Hecho) Proyecto Supabase dedicado creado y `.env` rellenado.
+2. Probar en un móvil Android con Expo Go (`npx expo start -c`, escanear el QR) y decir qué falla. Comprobar antes que la versión de Expo Go admite el SDK 58.
 3. Confirmar si se exige APK.
 
 ## Siguiente paso concreto
