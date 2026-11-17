@@ -1,0 +1,12 @@
+{
+  "name": "nota-online", "version": "1.0.0", "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start", "android": "expo start --android", "web": "expo start --web",
+    "typecheck": "tsc --noEmit", "test": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.ts",
+    "check": "npm run typecheck && npm test", "export:android": "expo export --platform android"
+  },
+  "dependencies": {"expo": "~58.0.26", "react": "19.3.0", "react-native": "0.88.1", "expo-status-bar": "~58.0.5"},
+  "devDependencies": {"typescript": "~6.0.3", "@types/react": "~19.3.0"},
+  "engines": {"node": ">=24.0.0"}
+}
