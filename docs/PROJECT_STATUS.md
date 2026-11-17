@@ -20,12 +20,15 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
   - Inicios de sesión anónimos activados (estaban desactivados; los activó Claude en el panel con permiso del usuario).
   - Una sesión anónima real llega con `is_anonymous=true`: `create_classroom` y `list_classrooms` dan `teacher_required`, `join_classroom` con un código inexistente da `session_not_found` y `classroom_snapshot` de una sesión ajena da `access_denied`.
   - Esas pruebas crearon 2 usuarios anónimos de prueba en el proyecto (inofensivos).
-  - NO probado todavía: un profesor real, crear sesión, votar, cerrar (el recorrido completo) ni la concurrencia.
+- **Recorrido profesor + alumno contra el Supabase real** (2026-11-17), profesor en un Android con Expo Go y alumno simulado por la API REST (no por la interfaz del alumno):
+  - Profesor en el móvil: Expo Go admite el SDK 58 y la app arranca leyendo el `.env`; acceso con la cuenta de profesor; crear sesión (código `LE5SXN`); añadir un trabajo; abrir la votación; ver «Han votado: 1 voto» sin media (sondeo); cerrar y ver «8,0 · 1 voto».
+  - Alumno (API): unirse con el código (idempotente, también en minúsculas y con espacio); voto 8 aceptado; reintento del mismo 8 devuelve 8 sin duplicar; cambiar a 3 → `already_voted`; nota 11 → `invalid_score`; con la votación abierta no ve recuento ni media; tras cerrar ve `vote_count=1`, `average=8` y su `my_score=8`; un alumno que llega tarde y vota → `voting_closed`.
+  - Datos de prueba que quedan en el proyecto: la sesión «Clase pa probar» con 2 participantes de prueba y 1 voto, y 4 usuarios anónimos en total.
+  - NO probado: la **interfaz del alumno** en un móvil (selector de nota, confirmación, espera, resultados), reabrir la app y reanudar, el caso «Sin votos» en pantalla, errores de red en dispositivo, concurrencia real y varias sesiones a la vez.
 
 ## Implementado sin verificar
 - **Toda la interfaz** (pantallas, navegación, hooks de sondeo, servicios): escrita y compilada, **nunca ejecutada** en Android ni en emulador.
-- La **app** (cliente) todavía no se ha ejecutado contra Supabase: el `.env` está creado (proyecto NotaOnline-ReactNative) y Expo arranca leyéndolo, pero falta abrirla en un móvil.
-- Cuenta de profesor: creada por el usuario, no verificada (no se tiene su contraseña).
+- La **interfaz del alumno** nunca se ha visto en un móvil (solo se probó su lado servidor por API). Tampoco se ha comprobado el diseño visual en varios tamaños de pantalla ni el teclado en formularios largos.
 - Carreras reales (voto frente a cierre): razonadas por diseño, no probadas con concurrencia.
 - Reanudación al reabrir la app, sondeo con la app en segundo plano y errores de red en dispositivo: sin comprobar.
 
@@ -37,7 +40,7 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
 
 ## Bloqueos que requieren al usuario
 1. (Hecho) Proyecto Supabase dedicado creado y `.env` rellenado.
-2. Probar en un móvil Android con Expo Go (`npx expo start -c`, escanear el QR) y decir qué falla. Comprobar antes que la versión de Expo Go admite el SDK 58.
+2. (Hecho para el profesor) Probar la **interfaz del alumno** en el móvil: con un solo teléfono se puede cerrar la sesión de profesor, pulsar «Soy alumno» y entrar con el código; para votar hace falta que el profesor tenga un trabajo abierto.
 3. Confirmar si se exige APK.
 
 ## Siguiente paso concreto
