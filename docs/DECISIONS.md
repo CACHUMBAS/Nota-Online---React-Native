@@ -36,7 +36,7 @@
 - **Estado:** Decisión de implementación acorde a las reglas de integridad pedidas.
 - **Decisiones y motivo:**
   - Tablas en el esquema `nota_private` (no expuesto), RLS activada sin políticas y sin privilegios para `anon`/`authenticated`. Todo pasa por funciones `SECURITY DEFINER` con `search_path` vacío, ejecutables solo por `authenticated`. Así no hay lectura directa de votos ajenos ni de agregados.
-  - Profesor = usuario no anónimo y propietario de la sesión (se comprueba en la tabla, nunca un indicador enviado por el móvil). Para que solo existan las cuentas preparadas hay que desactivar el registro abierto en Supabase (ver `SUPABASE_SETUP.md`).
+  - Profesor = usuario no anónimo y propietario de la sesión (se comprueba en la tabla, nunca un indicador enviado por el móvil). Limitación: con el registro abierto de Supabase activado (necesario mientras no se confirme que cerrarlo no bloquea la entrada anónima) cualquier persona con la clave pública puede registrarse y crear sus propias sesiones; no puede acceder a las ajenas. Endurecimiento posible: lista de correos autorizados comprobada en `create_classroom`. Ver `SUPABASE_SETUP.md`.
   - Alumno = usuario anónimo que se unió con el código. El código de sala solo permite entrar; no da permisos de profesor.
   - El propietario no puede unirse como alumno a su propia sesión (`owner_cannot_join`): evita que el profesor vote con la misma cuenta. Es una regla añadida, no un requisito del profesor de la asignatura.
   - Unicidad y coherencia en la base de datos: un voto por (trabajo, participante), nota 0–10, un solo trabajo abierto por sesión (índice parcial único) y claves compuestas para que un voto no pueda cruzar de sesión.
