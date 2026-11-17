@@ -24,11 +24,12 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
   - Profesor en el móvil: Expo Go admite el SDK 58 y la app arranca leyendo el `.env`; acceso con la cuenta de profesor; crear sesión (código `LE5SXN`); añadir un trabajo; abrir la votación; ver «Han votado: 1 voto» sin media (sondeo); cerrar y ver «8,0 · 1 voto».
   - Alumno (API): unirse con el código (idempotente, también en minúsculas y con espacio); voto 8 aceptado; reintento del mismo 8 devuelve 8 sin duplicar; cambiar a 3 → `already_voted`; nota 11 → `invalid_score`; con la votación abierta no ve recuento ni media; tras cerrar ve `vote_count=1`, `average=8` y su `my_score=8`; un alumno que llega tarde y vota → `voting_closed`.
   - Datos de prueba que quedan en el proyecto: la sesión «Clase pa probar» con 2 participantes de prueba y 1 voto, y 4 usuarios anónimos en total.
-  - NO probado: la **interfaz del alumno** en un móvil (selector de nota, confirmación, espera, resultados), reabrir la app y reanudar, el caso «Sin votos» en pantalla, errores de red en dispositivo, concurrencia real y varias sesiones a la vez.
+  - **Interfaz del alumno en el móvil** (comprobada por el usuario, no observada por Claude): entrar con el código, votar y, tras cerrar Expo Go por completo y reabrirlo, volver a la sesión guardada mostrando su voto (reanudación).
+  - NO probado: el caso «Sin votos» en pantalla, errores de red en dispositivo (cortar la conexión al votar), la apariencia en distintos tamaños de pantalla y con el teclado abierto, concurrencia real y varias sesiones a la vez. Los detalles de lo que el usuario vio en cada pantalla del alumno no están registrados paso a paso.
 
 ## Implementado sin verificar
 - **Toda la interfaz** (pantallas, navegación, hooks de sondeo, servicios): escrita y compilada, **nunca ejecutada** en Android ni en emulador.
-- La **interfaz del alumno** nunca se ha visto en un móvil (solo se probó su lado servidor por API). Tampoco se ha comprobado el diseño visual en varios tamaños de pantalla ni el teclado en formularios largos.
+- Diseño visual en varios tamaños de pantalla, teclado en formularios, accesibilidad con lector de pantalla y comportamiento sin red: sin comprobar. La interfaz del alumno se probó en un solo móvil.
 - Carreras reales (voto frente a cierre): razonadas por diseño, no probadas con concurrencia.
 - Reanudación al reabrir la app, sondeo con la app en segundo plano y errores de red en dispositivo: sin comprobar.
 
