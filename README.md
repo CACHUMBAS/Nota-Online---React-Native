@@ -38,7 +38,8 @@ Para probar el recorrido completo hacen falta dos instancias: una como profesor 
 ## Pruebas
 - **Dominio y cliente** (Node): notas 0–10, códigos, textos, medias («Sin votos» no es un 0), traducción de errores y validación de las respuestas del servidor.
 - **Base de datos** ([PGlite](https://pglite.dev), PostgreSQL real en memoria): las migraciones se aplican de verdad y se prueban con identidades distintas — permisos de profesor y alumno, aislamiento entre sesiones, un voto por participante, reintentos sin duplicar, cierre irreversible, un solo trabajo abierto, resultados ocultos hasta cerrar y restricciones de la propia base de datos.
-- **Límites:** PGlite simula `auth.uid()` y los roles de Supabase, y tiene una sola conexión, así que no prueba carreras concurrentes reales ni sustituye a probar contra Supabase. La interfaz no tiene pruebas automáticas; se prueba a mano en Android.
+- **Concurrencia real:** PGlite tiene una sola conexión, así que la concurrencia se prueba aparte contra un Supabase real con `scripts/concurrency-check.mjs` (alumnos anónimos reales votando en paralelo). Método, resultados y límites en [docs/CONCURRENCY.md](docs/CONCURRENCY.md). No estresa el instante exacto de la carrera voto↔cierre.
+- **Límites:** PGlite simula `auth.uid()` y los roles de Supabase y no sustituye a probar contra Supabase. La interfaz no tiene pruebas automáticas; se prueba a mano en Android.
 
 ## Estructura
 Organizada por funcionalidades (`auth`, `sessions`, `projects`, `voting`, `results`) más `shared`. Una pantalla coordina; un componente presenta y emite acciones por props; un hook gestiona estado y ciclo de vida; un servicio llama al servidor; el dominio son funciones puras. Detalle en [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -62,6 +63,7 @@ El **servidor es la autoridad**; deshabilitar un botón en el móvil no basta.
 ## Limitaciones conocidas
 - **Un voto por identidad anónima no garantiza un voto por persona:** borrar los datos de la app o cambiar de identidad permite votar de nuevo. No se promete protección absoluta.
 - **Sondeo, no Realtime:** la pantalla consulta al servidor cada 4 s mientras está activa y al volver a primer plano. No hay notificaciones push.
+- **Límite de alumnos anónimos de Supabase:** por defecto 30 altas por hora y por IP. En una clase de más de 30 alumnos en la misma red hay que subir ese límite en el panel (ver [docs/CONCURRENCY.md](docs/CONCURRENCY.md)).
 - **Registro abierto:** con el registro de Supabase activado, cualquiera con la clave pública puede crear sus propias sesiones (no acceder a las ajenas). Detalle en [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
 - El profesor no puede unirse como alumno a su propia sesión (regla añadida, no un requisito de la asignatura).
 - No hay ponderaciones, comentarios, archivos ni chat.
