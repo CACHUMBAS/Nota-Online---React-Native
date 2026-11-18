@@ -56,3 +56,12 @@
 - **Fecha:** 2026-11-17
 - **Estado:** Decisión de implementación.
 - **Motivo:** el profesor debe poder recuperar una votación abierta aunque borre los datos locales; por eso hay una función servidor que lista solo sus sesiones (migración `002`). El alumno reanuda su sala con su identidad anónima y la última sala recordada.
+
+## ADR-010: Dominio compartido en `shared/domain` para evitar dependencias circulares entre funcionalidades
+- **Fecha:** 2026-11-18
+- **Estado:** Refactor sin cambios de comportamiento, decidido tras revisar el código real.
+- **Problema:** el grafo de imports mostraba ciclos entre funcionalidades (por ejemplo `sessions ↔ voting` y `projects ↔ sessions`). Las causas eran piezas mal ubicadas: los tipos `Project`/`SessionSnapshot` vivían en `sessions`, y validaciones y formato genéricos (`cleanText`, `formatAverage`…) vivían en `voting/domain/rules.ts`.
+- **Decisión:** los tipos pasan a `shared/domain/classroom.ts`; el texto a `shared/domain/text.ts`; el formato a `shared/domain/format.ts`; las piezas básicas de los parsers (y `parseId`/`parseScore`) a `shared/domain/parsers.ts`; `normalizeCode` a `sessions/domain/code.ts`; `voting/domain/rules.ts` queda solo con `validScore`.
+- **Resultado medido con el grafo de imports:** `shared` no depende de ninguna funcionalidad y no hay ciclos. Quedan seis dependencias unidireccionales, casi todas en pantallas (composición). Detalle en `ARCHITECTURE.md`.
+- **Comprobación:** `typecheck` sin errores, 16 de 16 pruebas y exportación del bundle Android (939 módulos). No se ha vuelto a probar la interfaz en el móvil tras el refactor.
+- **Límite:** `RootNavigator` y `AuthContext` siguen tocando el cliente o un servicio directamente; no son componentes visuales y se dejan así.
