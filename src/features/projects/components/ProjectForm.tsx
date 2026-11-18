@@ -5,7 +5,7 @@ import { FormField } from '../../../shared/components/FormField.tsx';
 import { MAX_TITLE_LENGTH } from '../../../shared/lib/config.ts';
 import { validationMessage } from '../../../shared/lib/validation.ts';
 import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
-import { cleanOptionalText, cleanText } from '../../voting/domain/rules.ts';
+import { cleanOptionalText, cleanText } from '../../../shared/domain/text.ts';
 
 interface ProjectFormProps {
   busy: boolean;

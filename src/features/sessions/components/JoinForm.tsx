@@ -5,7 +5,8 @@ import { FormField } from '../../../shared/components/FormField.tsx';
 import { MAX_ALIAS_LENGTH } from '../../../shared/lib/config.ts';
 import { validationMessage } from '../../../shared/lib/validation.ts';
 import { spacing } from '../../../shared/theme/theme.ts';
-import { cleanText, normalizeCode } from '../../voting/domain/rules.ts';
+import { cleanText } from '../../../shared/domain/text.ts';
+import { normalizeCode } from '../domain/code.ts';
 
 interface JoinFormProps {
   busy: boolean;

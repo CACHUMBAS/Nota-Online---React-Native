@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../shared/components/Button.tsx';
 import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
 import { ResultSummary } from '../../results/components/ResultSummary.tsx';
-import { formatVoteCount } from '../../voting/domain/rules.ts';
+import { formatVoteCount } from '../../../shared/domain/format.ts';
 import type { Project } from '../../../shared/domain/classroom.ts';
 import { StatusBadge } from './StatusBadge.tsx';
 

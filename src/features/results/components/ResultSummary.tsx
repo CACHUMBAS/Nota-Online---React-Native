@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, fontSize, spacing } from '../../../shared/theme/theme.ts';
-import { formatAverage, formatVoteCount } from '../../voting/domain/rules.ts';
+import { formatAverage, formatVoteCount } from '../../../shared/domain/format.ts';
 
 interface ResultSummaryProps {
   /** null = sin votos. El servidor solo envía la media con el trabajo cerrado. */

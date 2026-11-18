@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { AppError, codeFromMessage, toAppError, ERROR_MESSAGES } from '../src/shared/lib/errors.ts';
 import { parseSnapshot, parseClassroomList, parseId, parseScore } from '../src/features/sessions/domain/parsers.ts';
 import { findOpenProject, closedProjects } from '../src/features/projects/domain/projects.ts';
-import { cleanOptionalText, formatVoteCount } from '../src/features/voting/domain/rules.ts';
+import { cleanOptionalText } from '../src/shared/domain/text.ts';
+import { formatVoteCount } from '../src/shared/domain/format.ts';
 
 const session = { id: 's1', title: 'Clase', code: 'ABC234', status: 'active', created_at: '2026-11-17T10:00:00+00:00' };
 const project = (over: Record<string, unknown>) =>
