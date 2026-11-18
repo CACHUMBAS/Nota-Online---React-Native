@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
+import { colors, fontSize, radius, shadows, spacing } from '../../../shared/theme/theme.ts';
 
 const SCORES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
@@ -23,7 +23,12 @@ export function ScoreSelector({ value, onChange, disabled = false }: ScoreSelect
             accessibilityState={{ selected, disabled }}
             disabled={disabled}
             onPress={() => onChange(score)}
-            style={[styles.cell, selected && styles.cellSelected, disabled && styles.cellDisabled]}
+            style={({ pressed }) => [
+              styles.cell,
+              selected && styles.cellSelected,
+              pressed && !selected && styles.cellPressed,
+              disabled && styles.cellDisabled,
+            ]}
           >
             <Text style={[styles.cellText, selected && styles.cellTextSelected]}>{score}</Text>
           </Pressable>
@@ -34,19 +39,25 @@ export function ScoreSelector({ value, onChange, disabled = false }: ScoreSelect
 }
 
 const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm + 2 },
   cell: {
     width: 56,
     height: 56,
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: colors.borderStrong,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cellSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
+  cellSelected: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primaryDark,
+    transform: [{ scale: 1.08 }],
+    ...shadows.raised,
+  },
+  cellPressed: { backgroundColor: colors.primarySoft },
   cellDisabled: { opacity: 0.5 },
-  cellText: { fontSize: fontSize.title, fontWeight: '700', color: colors.text },
+  cellText: { fontSize: fontSize.title + 2, fontWeight: '800', color: colors.text },
   cellTextSelected: { color: colors.onPrimary },
 });

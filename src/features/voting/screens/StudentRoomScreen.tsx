@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Card } from '../../../shared/components/Card.tsx';
 import { HeaderButton } from '../../../shared/components/HeaderButton.tsx';
 import { Screen } from '../../../shared/components/Screen.tsx';
 import { EmptyState, ErrorState, LoadingState, Notice } from '../../../shared/components/StateViews.tsx';
@@ -79,8 +80,8 @@ export function StudentRoomScreen({ navigation, route }: Props) {
       {session.status === 'closed' ? <Notice kind="info" message="La sesión ha terminado. Estos son los resultados." /> : null}
 
       {openProject && session.status === 'active' ? (
-        <View style={styles.card}>
-          <Text style={styles.label}>Se está votando</Text>
+        <Card style={styles.card}>
+          <Text style={styles.label}>🗳️ Se está votando</Text>
           <Text style={styles.title}>{openProject.title}</Text>
           {openProject.author ? <Text style={styles.author}>{openProject.author}</Text> : null}
           <VotePanel
@@ -90,9 +91,9 @@ export function StudentRoomScreen({ navigation, route }: Props) {
             errorMessage={vote.error?.message ?? null}
             onConfirm={(score) => void handleConfirm(openProject, score)}
           />
-        </View>
+        </Card>
       ) : session.status === 'active' ? (
-        <EmptyState title="Esperando el siguiente trabajo" description="El profesor abrirá la votación enseguida. Esta pantalla se actualiza sola." />
+        <EmptyState icon="⏳" title="Esperando el siguiente trabajo" description="El profesor abrirá la votación enseguida. Esta pantalla se actualiza sola." />
       ) : null}
 
       {finished.length > 0 ? (
@@ -106,16 +107,9 @@ export function StudentRoomScreen({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  label: { fontSize: fontSize.small, color: colors.textMuted },
+  card: { gap: spacing.md, padding: spacing.lg },
+  label: { fontSize: fontSize.small, fontWeight: '800', color: colors.warning },
   title: { fontSize: fontSize.heading, fontWeight: '800', color: colors.text },
   author: { fontSize: fontSize.body, color: colors.textMuted },
-  heading: { fontSize: fontSize.title, fontWeight: '700', color: colors.text },
+  heading: { fontSize: fontSize.title, fontWeight: '800', color: colors.text, marginTop: spacing.sm },
 });
