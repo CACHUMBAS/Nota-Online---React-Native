@@ -42,6 +42,7 @@ export function JoinForm({ busy, onSubmit }: JoinFormProps) {
     <View style={styles.form}>
       <FormField
         label="Código de la sesión"
+        hint="Son 6 letras o números. Lo verás en la pantalla del profesor."
         value={code}
         onChangeText={setCode}
         error={errors.code}
@@ -52,6 +53,7 @@ export function JoinForm({ busy, onSubmit }: JoinFormProps) {
       />
       <FormField
         label="Tu alias"
+        hint="Elige el nombre que quieras para identificarte en la sesión."
         value={alias}
         onChangeText={setAlias}
         error={errors.alias}
@@ -60,7 +62,7 @@ export function JoinForm({ busy, onSubmit }: JoinFormProps) {
         returnKeyType="done"
         onSubmitEditing={handleSubmit}
       />
-      <Button label="Entrar" loading={busy} onPress={handleSubmit} />
+      <Button icon="🎓" label="Entrar a la clase" loading={busy} onPress={handleSubmit} />
     </View>
   );
 }

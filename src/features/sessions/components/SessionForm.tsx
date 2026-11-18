@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { Button } from '../../../shared/components/Button.tsx';
+import { Card } from '../../../shared/components/Card.tsx';
 import { FormField } from '../../../shared/components/FormField.tsx';
 import { MAX_TITLE_LENGTH } from '../../../shared/lib/config.ts';
 import { validationMessage } from '../../../shared/lib/validation.ts';
-import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
+import { colors, fontSize, spacing } from '../../../shared/theme/theme.ts';
 import { cleanText } from '../../../shared/domain/text.ts';
 
 interface SessionFormProps {
@@ -27,10 +28,11 @@ export function SessionForm({ busy, onSubmit }: SessionFormProps) {
   }
 
   return (
-    <View style={styles.form}>
-      <Text style={styles.heading}>Nueva sesión de clase</Text>
+    <Card style={styles.form}>
+      <Text style={styles.heading} accessibilityRole="header">Nueva sesión de clase</Text>
       <FormField
         label="Título de la sesión"
+        hint="Por ejemplo: «3º B · Presentaciones de Historia». Lo verán los alumnos."
         value={title}
         onChangeText={setTitle}
         error={error}
@@ -39,19 +41,12 @@ export function SessionForm({ busy, onSubmit }: SessionFormProps) {
         returnKeyType="done"
         onSubmitEditing={handleSubmit}
       />
-      <Button label="Crear sesión" loading={busy} onPress={handleSubmit} />
-    </View>
+      <Button icon="➕" label="Crear sesión" loading={busy} onPress={handleSubmit} />
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  form: {
-    gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  heading: { fontSize: fontSize.title, fontWeight: '700', color: colors.text },
+  form: { gap: spacing.md },
+  heading: { fontSize: fontSize.title, fontWeight: '800', color: colors.text },
 });

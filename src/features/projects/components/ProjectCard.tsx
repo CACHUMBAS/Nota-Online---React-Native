@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../shared/components/Button.tsx';
-import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
+import { Card } from '../../../shared/components/Card.tsx';
+import { colors, fontSize, spacing } from '../../../shared/theme/theme.ts';
 import { ResultSummary } from '../../results/components/ResultSummary.tsx';
 import { formatVoteCount } from '../../../shared/domain/format.ts';
 import type { Project } from '../../../shared/domain/classroom.ts';
@@ -16,10 +17,10 @@ interface ProjectCardProps {
   onClose: () => void;
 }
 
-/** Trabajo visto por el profesor, con la acción que corresponde a su estado. */
+/** Trabajo visto por el profesor, con la acción que corresponde a su estado. El que se está votando se resalta. */
 export function ProjectCard({ project, canOpen, busy, onOpen, onClose }: ProjectCardProps) {
   return (
-    <View style={styles.card}>
+    <Card tone={project.status === 'open' ? 'warning' : 'default'}>
       <View style={styles.header}>
         <View style={styles.titles}>
           <Text style={styles.title}>{project.title}</Text>
@@ -29,35 +30,30 @@ export function ProjectCard({ project, canOpen, busy, onOpen, onClose }: Project
       </View>
 
       {project.status === 'open' ? (
-        <Text style={styles.votes}>Han votado: {formatVoteCount(project.vote_count ?? 0)}</Text>
+        <Text style={styles.votes} accessibilityLiveRegion="polite">
+          🗳️ Han votado: {formatVoteCount(project.vote_count ?? 0)}
+        </Text>
       ) : null}
       {project.status === 'closed' ? <ResultSummary average={project.average} voteCount={project.vote_count} /> : null}
 
       {project.status === 'pending' ? (
         <Button
+          icon="▶️"
           label="Abrir votación"
           disabled={!canOpen || busy}
           accessibilityHint={canOpen ? undefined : 'No disponible: hay otra votación abierta o la sesión está cerrada.'}
           onPress={onOpen}
         />
       ) : null}
-      {project.status === 'open' ? <Button label="Cerrar votación" variant="danger" disabled={busy} onPress={onClose} /> : null}
-    </View>
+      {project.status === 'open' ? <Button icon="🔒" label="Cerrar votación" variant="danger" disabled={busy} onPress={onClose} /> : null}
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    gap: spacing.sm,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: spacing.sm },
   titles: { flex: 1, gap: 2 },
-  title: { fontSize: fontSize.body, fontWeight: '700', color: colors.text },
+  title: { fontSize: fontSize.body + 1, fontWeight: '800', color: colors.text },
   author: { fontSize: fontSize.small, color: colors.textMuted },
-  votes: { fontSize: fontSize.body, color: colors.text },
+  votes: { fontSize: fontSize.body, fontWeight: '700', color: colors.text },
 });

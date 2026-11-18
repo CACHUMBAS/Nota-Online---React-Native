@@ -1,7 +1,7 @@
 # Estado del proyecto
 Actualizado: 2026-11-18
-Rama de trabajo más reciente: `docs/delete-session-verified` (desde `main`; ver el PR correspondiente)
-`main` en `aa2333a` al escribir esto (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo y la corrección del estado, y todas se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
+Rama de trabajo más reciente: `feat/design-polish` (desde `main`; ver el PR correspondiente)
+`main` en `f70ee6a` al escribir esto (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo y la corrección del estado, y todas se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
 
 ## Requisitos y permisos confirmados
 - React Native obligatorio, entrega en ≤ 2 días; prioridad: estructura por componentes, claridad y funcionamiento.
@@ -12,6 +12,7 @@ Rama de trabajo más reciente: `docs/delete-session-verified` (desde `main`; ver
 ## Implementado y verificado (2026-11-17)
 - `npm run typecheck`: OK. `npm test`: **16/16** (dominio, validadores y errores del cliente, 10 pruebas de base de datos con PGlite).
 - Migraciones `001` (tablas, RPC, permisos), `002` (`list_classrooms`) y `003` (`delete_classroom`) aplicadas sobre PostgreSQL real en memoria (PGlite).
+- **Rediseño visual y guía al profesor** (2026-11-18, ADR-013, rama `feat/design-polish`): tema con contraste AA medido, `Card` común, inicio con tarjetas de rol, panel del profesor con «Siguiente paso», estado de trabajos con símbolo, selector de nota y resultados más claros. 22 de 22 pruebas, bundle de Android exportado (943 módulos), reglas de arquitectura intactas. **El usuario lo revisó en su móvil y le gusta** (comprobado por el usuario, no observado por Claude; no se registró qué detalles miró). **Sin comprobar:** otros tamaños de pantalla, lector de pantalla (TalkBack) y otras versiones de Android.
 - **Borrar sesión** (2026-11-18, ADR-012): función del servidor + botón en el panel del profesor, solo con la sesión cerrada y solo para el propietario. 17 de 17 pruebas, comprobada por mutación, bundle de Android exportado. **Migración 003 aplicada en el Supabase real el 2026-11-18** (SQL Editor: «Success»; verificada desde fuera: sin sesión HTTP 401, que antes era 404, y un alumno anónimo con un id inexistente recibe `access_denied`). **El botón lo probó el usuario en su móvil y funciona** (comprobado por el usuario, no observado por Claude); Claude verificó en el servidor que la sesión borrada ya no existe (`session_not_found` con su código).
 - `npm run export:android`: el bundle se genera (935 módulos, `.hbc` de 2,7 MB). Eso demuestra que Metro resuelve la app, **no** que funcione en un móvil.
 - `npx expo install --check`: dependencias compatibles con el SDK 58.

@@ -3,21 +3,25 @@ import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.t
 import type { ProjectStatus } from '../../../shared/domain/classroom.ts';
 import { STATUS_LABELS } from '../domain/projects.ts';
 
-const BACKGROUNDS: Record<ProjectStatus, string> = {
-  pending: colors.pendingSoft,
-  open: colors.successSoft,
-  closed: colors.infoSoft,
+/** Fondo, color del texto y símbolo de cada estado. El símbolo ayuda a distinguirlos sin depender solo del color. */
+const LOOK: Record<ProjectStatus, { background: string; color: string; symbol: string }> = {
+  pending: { background: colors.pendingSoft, color: colors.textMuted, symbol: '○' },
+  open: { background: colors.warningSoft, color: colors.warning, symbol: '●' },
+  closed: { background: colors.successSoft, color: colors.success, symbol: '✓' },
 };
 
 export function StatusBadge({ status }: { status: ProjectStatus }) {
+  const look = LOOK[status];
   return (
-    <View style={[styles.badge, { backgroundColor: BACKGROUNDS[status] }]}>
-      <Text style={styles.text}>{STATUS_LABELS[status]}</Text>
+    <View accessible accessibilityLabel={STATUS_LABELS[status]} style={[styles.badge, { backgroundColor: look.background }]}>
+      <Text style={[styles.text, { color: look.color }]}>
+        {look.symbol} {STATUS_LABELS[status]}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  badge: { alignSelf: 'flex-start', borderRadius: radius.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
-  text: { fontSize: fontSize.small, fontWeight: '700', color: colors.text },
+  badge: { alignSelf: 'flex-start', borderRadius: radius.sm, paddingHorizontal: spacing.sm + 2, paddingVertical: spacing.xs },
+  text: { fontSize: fontSize.small, fontWeight: '800' },
 });

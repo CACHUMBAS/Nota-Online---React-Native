@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../shared/components/Button.tsx';
+import { Card } from '../../../shared/components/Card.tsx';
 import { Notice } from '../../../shared/components/StateViews.tsx';
-import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
+import { colors, fontSize, spacing } from '../../../shared/theme/theme.ts';
 import type { Project } from '../../../shared/domain/classroom.ts';
 import { ScoreSelector } from './ScoreSelector.tsx';
 
@@ -25,20 +26,28 @@ export function VotePanel({ project, submitting, errorMessage, onConfirm }: Vote
 
   if (project.my_score !== null) {
     return (
-      <View style={styles.confirmed} accessible accessibilityLiveRegion="polite">
-        <Text style={styles.confirmedTitle}>Voto registrado</Text>
-        <Text style={styles.confirmedScore}>{project.my_score}</Text>
-        <Text style={styles.hint}>Tu voto ya está guardado en el servidor y no se puede cambiar.</Text>
-      </View>
+      <Card tone="success" style={styles.confirmed}>
+        <View accessible accessibilityLiveRegion="polite" accessibilityLabel={`Voto registrado. Tu nota: ${project.my_score}`} style={styles.confirmedInner}>
+          <Text accessible={false} importantForAccessibility="no" style={styles.check}>✅</Text>
+          <Text style={styles.confirmedTitle}>Voto registrado</Text>
+          <Text style={styles.confirmedScore}>{project.my_score}</Text>
+          <Text style={styles.hint}>Tu voto ya está guardado y no se puede cambiar. Cuando el profesor cierre la votación verás la media.</Text>
+        </View>
+      </Card>
     );
   }
 
   return (
     <View style={styles.panel}>
       <Text style={styles.prompt}>Elige tu nota</Text>
+      <Text style={styles.hint}>De 0 (la más baja) a 10 (la más alta).</Text>
       <ScoreSelector value={selected} onChange={setSelected} disabled={submitting} />
+      <Text accessibilityLiveRegion="polite" style={styles.selection}>
+        {selected === null ? 'Todavía no has elegido ninguna nota' : `Tu nota: ${selected}`}
+      </Text>
       {errorMessage ? <Notice kind="error" message={errorMessage} /> : null}
       <Button
+        icon="✅"
         label="Confirmar voto"
         loading={submitting}
         disabled={selected === null}
@@ -53,15 +62,12 @@ export function VotePanel({ project, submitting, errorMessage, onConfirm }: Vote
 
 const styles = StyleSheet.create({
   panel: { gap: spacing.md },
-  prompt: { fontSize: fontSize.title, fontWeight: '700', color: colors.text },
-  confirmed: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.successSoft,
-  },
-  confirmedTitle: { fontSize: fontSize.title, fontWeight: '700', color: colors.success },
-  confirmedScore: { fontSize: 56, fontWeight: '800', color: colors.success },
+  prompt: { fontSize: fontSize.title, fontWeight: '800', color: colors.text },
+  selection: { fontSize: fontSize.body, fontWeight: '700', color: colors.text },
+  confirmed: { alignItems: 'center', padding: spacing.lg },
+  confirmedInner: { alignItems: 'center', gap: spacing.sm },
+  check: { fontSize: 36 },
+  confirmedTitle: { fontSize: fontSize.title, fontWeight: '800', color: colors.success },
+  confirmedScore: { fontSize: 64, fontWeight: '800', color: colors.success },
   hint: { fontSize: fontSize.small, color: colors.textMuted, textAlign: 'center' },
 });

@@ -14,7 +14,7 @@ Necesitas **dos instancias** de la app con Expo Go: **A = profesor** y **B = alu
 | 1 | A | **Soy profesor** → correo y contraseña → *Iniciar sesión* | Pantalla «Mis sesiones», vacía |
 | 2 | A | Título «Clase de prueba» → *Crear sesión* | Panel de la sesión con un **código de 6 caracteres** |
 | 3 | A | *Añadir trabajo* ×2 («Proyecto uno», «Proyecto dos») | Ambos aparecen como **Pendiente** |
-| 4 | B | **Soy alumno** → código + alias → *Entrar* | «Esperando el siguiente trabajo» |
+| 4 | B | **Soy alumno** → código + alias → *Entrar a la clase* | «Esperando el siguiente trabajo» |
 | 5 | A | En «Proyecto uno»: *Abrir votación* | Estado **Votando**. «Proyecto dos» no se puede abrir |
 | 6 | B | (se actualiza solo, hasta 4 s) | Aparece «Proyecto uno» con las notas 0–10, **ninguna seleccionada** |
 | 7 | B | Elegir una nota → *Confirmar voto* | «Voto registrado» con la nota. No se puede cambiar |

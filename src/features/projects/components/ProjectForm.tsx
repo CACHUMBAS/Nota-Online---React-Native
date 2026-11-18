@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { Button } from '../../../shared/components/Button.tsx';
+import { Card } from '../../../shared/components/Card.tsx';
 import { FormField } from '../../../shared/components/FormField.tsx';
 import { MAX_TITLE_LENGTH } from '../../../shared/lib/config.ts';
 import { validationMessage } from '../../../shared/lib/validation.ts';
-import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
+import { colors, fontSize, spacing } from '../../../shared/theme/theme.ts';
 import { cleanOptionalText, cleanText } from '../../../shared/domain/text.ts';
 
 interface ProjectFormProps {
@@ -41,23 +42,31 @@ export function ProjectForm({ busy, onSubmit }: ProjectFormProps) {
   }
 
   return (
-    <View style={styles.form}>
-      <Text style={styles.heading}>Añadir trabajo</Text>
-      <FormField label="Título del trabajo" value={title} onChangeText={setTitle} error={errors.title} editable={!busy} maxLength={MAX_TITLE_LENGTH} />
-      <FormField label="Autor o grupo (opcional)" value={author} onChangeText={setAuthor} error={errors.author} editable={!busy} maxLength={MAX_TITLE_LENGTH} />
-      <Button label="Añadir trabajo" variant="secondary" loading={busy} onPress={() => void handleSubmit()} />
-    </View>
+    <Card style={styles.form}>
+      <Text style={styles.heading} accessibilityRole="header">Añadir un trabajo</Text>
+      <FormField
+        label="Título del trabajo"
+        value={title}
+        onChangeText={setTitle}
+        error={errors.title}
+        editable={!busy}
+        maxLength={MAX_TITLE_LENGTH}
+      />
+      <FormField
+        label="Autor o grupo (opcional)"
+        hint="Los alumnos lo verán junto al título."
+        value={author}
+        onChangeText={setAuthor}
+        error={errors.author}
+        editable={!busy}
+        maxLength={MAX_TITLE_LENGTH}
+      />
+      <Button icon="➕" label="Añadir trabajo" variant="secondary" loading={busy} onPress={() => void handleSubmit()} />
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  form: {
-    gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  heading: { fontSize: fontSize.title, fontWeight: '700', color: colors.text },
+  form: { gap: spacing.md },
+  heading: { fontSize: fontSize.title, fontWeight: '800', color: colors.text },
 });

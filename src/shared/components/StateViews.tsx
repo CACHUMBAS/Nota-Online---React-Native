@@ -1,6 +1,16 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { colors, fontSize, radius, spacing } from '../theme/theme.ts';
 import { Button } from './Button.tsx';
+import { Card } from './Card.tsx';
+
+/** Emoji decorativo: no se anuncia con lector de pantalla, el texto de al lado ya dice lo mismo. */
+function Emoji({ children, size }: { children: string; size: number }) {
+  return (
+    <Text accessible={false} importantForAccessibility="no" accessibilityElementsHidden style={{ fontSize: size }}>
+      {children}
+    </Text>
+  );
+}
 
 export function LoadingState({ label = 'Cargando…' }: { label?: string }) {
   return (
@@ -21,22 +31,34 @@ interface ErrorStateProps {
 export function ErrorState({ message, actionLabel = 'Reintentar', onAction }: ErrorStateProps) {
   return (
     <View style={styles.center}>
+      <Emoji size={40}>⚠️</Emoji>
       <Text accessibilityRole="alert" style={styles.errorText}>{message}</Text>
       {onAction ? <Button label={actionLabel} onPress={onAction} variant="secondary" /> : null}
     </View>
   );
 }
 
-export function EmptyState({ title, description }: { title: string; description?: string }) {
+interface EmptyStateProps {
+  title: string;
+  description?: string;
+  /** Emoji ilustrativo opcional. */
+  icon?: string;
+}
+
+/** Pantalla o sección sin contenido: dice qué pasa y qué hacer a continuación. */
+export function EmptyState({ title, description, icon }: EmptyStateProps) {
   return (
-    <View style={styles.empty}>
+    <Card style={styles.empty}>
+      {icon ? <Emoji size={36}>{icon}</Emoji> : null}
       <Text style={styles.emptyTitle}>{title}</Text>
       {description ? <Text style={styles.muted}>{description}</Text> : null}
-    </View>
+    </Card>
   );
 }
 
 type NoticeKind = 'error' | 'success' | 'info';
+
+const NOTICE_ICONS: Record<NoticeKind, string> = { error: '⚠️', success: '✅', info: 'ℹ️' };
 
 /** Mensaje en línea (error de una acción, confirmación, aviso). */
 export function Notice({ kind, message }: { kind: NoticeKind; message: string }) {
@@ -46,6 +68,7 @@ export function Notice({ kind, message }: { kind: NoticeKind; message: string })
       accessibilityLiveRegion="polite"
       style={[styles.notice, noticeStyles[kind]]}
     >
+      <Emoji size={fontSize.title}>{NOTICE_ICONS[kind]}</Emoji>
       <Text style={[styles.noticeText, { color: noticeText[kind] }]}>{message}</Text>
     </View>
   );
@@ -55,18 +78,10 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.lg },
   muted: { color: colors.textMuted, fontSize: fontSize.body, textAlign: 'center' },
   errorText: { color: colors.danger, fontSize: fontSize.body, textAlign: 'center' },
-  empty: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    padding: spacing.lg,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
+  empty: { alignItems: 'center', padding: spacing.lg },
   emptyTitle: { color: colors.text, fontSize: fontSize.title, fontWeight: '700', textAlign: 'center' },
-  notice: { padding: spacing.md, borderRadius: radius.md },
-  noticeText: { fontSize: fontSize.body },
+  notice: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, padding: spacing.md, borderRadius: radius.md },
+  noticeText: { flex: 1, fontSize: fontSize.body },
 });
 
 const noticeStyles = StyleSheet.create({

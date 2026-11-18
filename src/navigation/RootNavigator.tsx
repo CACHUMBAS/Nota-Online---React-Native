@@ -50,9 +50,10 @@ export function RootNavigator() {
       <Stack.Navigator
         initialRouteName={initialRouteName}
         screenOptions={{
-          headerStyle: { backgroundColor: colors.surface },
-          headerTintColor: colors.text,
-          headerTitleStyle: { fontWeight: '700' },
+          headerStyle: { backgroundColor: colors.background },
+          headerShadowVisible: false,
+          headerTintColor: colors.primary,
+          headerTitleStyle: { fontWeight: '800', color: colors.text },
           contentStyle: { backgroundColor: colors.background },
         }}
       >

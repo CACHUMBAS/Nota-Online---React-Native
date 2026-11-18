@@ -91,3 +91,19 @@
 - **Aviso al aplicarla:** el SQL Editor muestra «This query includes destructive operations» por el texto `delete from` del cuerpo de la función; la migración solo la define y no borra nada al ejecutarse. Hay que confirmar ese aviso.
 - **Sin probar:** el rechazo de borrar una sesión **activa** y el de otro profesor se probaron con PostgreSQL en memoria, pero no contra el servidor real.
 - **Contrapartida:** una acción destructiva más en la interfaz. No hay papelera ni deshacer.
+
+## ADR-013: Mejora del diseño y de la guía al profesor, sin librerías nuevas
+- **Fecha:** 2026-11-18
+- **Estado:** Hecho a petición del usuario («mejorar un poquito el diseño, intuitivo para todos los profes, un diseño chulo»). Solo cambia el aspecto y la guía; no toca el servidor, las reglas de voto ni las migraciones.
+- **Decisiones:**
+  - **Tokens de diseño en `shared/theme/theme.ts`:** paleta nueva, radios mayores, sombras suaves y escala tipográfica. Cambiar un color ahí lo cambia en toda la app.
+  - **Contraste medido, no supuesto.** Todos los pares de texto y fondo usados cumplen WCAG AA (≥ 4,5:1), comprobados con un script (por ejemplo: texto 15,9:1, gris de apoyo 7,3:1, botón primario 6,6:1, estados 5,4 a 6,5:1); el borde de los campos de texto sube de 1,4:1 a 3,57:1.
+  - **`Card` común** para todas las tarjetas, en vez de que cada pantalla repita su estilo.
+  - **Iconos con emoji decorativos, sin librerías de iconos.** Una dependencia nueva exigiría autorización, y los emojis no llevan coste de empaquetado. Se ocultan al lector de pantalla (`importantForAccessibility="no"`); los botones y tarjetas se anuncian por su texto.
+  - **El estado no depende solo del color:** `StatusBadge` añade un símbolo (○ pendiente, ● votando, ✓ cerrado).
+  - **Guía «Siguiente paso» para el profesor** (`teacherNextStep`, función pura con 5 pruebas): según el estado que devuelve el servidor, dice qué hacer ahora (añadir el primer trabajo, abrir la votación del siguiente, esperar y cerrar, o terminar). Es la mejora de intuición principal; se comprobó por mutación (si se quita la prioridad de la sesión cerrada, una prueba falla).
+  - **Inicio con dos tarjetas de rol** que explican qué hace cada uno; ayudas bajo los campos; botones con icono y más altos; zona de peligro separada con rótulo.
+- **Comprobado:** `typecheck` sin errores, 22 de 22 pruebas, bundle de Android exportado (943 módulos), contraste de todos los pares y reglas de arquitectura intactas (sin ciclos, ningún componente llama al servidor, 0 `any`).
+- **Revisión en el móvil:** el diseño se hizo sin ver la pantalla, guiado por medidas (contraste, arquitectura) y no por la vista. El usuario lo revisó después en su móvil y le gusta (comprobado por el usuario, no observado por Claude; no se registró qué detalles miró).
+- **NO comprobado:** otros tamaños de pantalla, lector de pantalla (TalkBack) y otras versiones de Android (los emojis pueden verse distintos).
+- **Límite:** la app fuerza tema claro (`userInterfaceStyle: light`); no hay modo oscuro.

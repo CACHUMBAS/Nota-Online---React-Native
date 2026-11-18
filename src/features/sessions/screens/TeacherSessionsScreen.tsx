@@ -52,9 +52,11 @@ export function TeacherSessionsScreen({ navigation }: Props) {
       {leave.error ? <Notice kind="error" message={leave.error.message} /> : null}
       {error ? <Notice kind="error" message={error.message} /> : null}
 
-      <Text style={styles.heading}>Tus sesiones</Text>
+      <Text style={styles.heading} accessibilityRole="header">
+        Tus sesiones{rooms.length > 0 ? ` (${rooms.length})` : ''}
+      </Text>
       {rooms.length === 0 ? (
-        <EmptyState title="Todavía no tienes sesiones" description="Crea una arriba y comparte su código con los alumnos." />
+        <EmptyState icon="🏫" title="Todavía no tienes sesiones" description="Crea una arriba y enseña su código a los alumnos para que entren." />
       ) : (
         <View style={styles.list}>
           {rooms.map((room) => (
@@ -67,6 +69,6 @@ export function TeacherSessionsScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  heading: { fontSize: fontSize.title, fontWeight: '700', color: colors.text },
+  heading: { fontSize: fontSize.title, fontWeight: '800', color: colors.text, marginTop: spacing.sm },
   list: { gap: spacing.sm },
 });
