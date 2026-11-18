@@ -27,7 +27,7 @@ Las pruebas con PGlite (`npm test`) comprueban permisos, duplicados y cierre sob
 - La interfaz no interviene: los alumnos de estas pruebas son peticiones directas al servidor.
 
 ## Hallazgo: límite de inicios de sesión anónimos
-En el panel de Supabase, *Authentication → Rate Limits*, el límite de **inicios de sesión anónimos es de 30 por hora y por dirección IP** (valor leído, no modificado). En una clase de más de 30 alumnos en la misma red, el 31.º no podría entrar durante esa hora. Opciones:
+En el panel de Supabase, *Authentication → Rate Limits*, el límite de **inicios de sesión anónimos es de 30 por hora y por dirección IP** (valor leído al hacer estas pruebas, que se ejecutaron con ese límite de 30; después, el 2026-11-18, se subió a 60 para una clase de hasta 40 alumnos, ver ADR-011). En una clase de más de 30 alumnos en la misma red, el 31.º no podría entrar durante esa hora. Opciones:
 - Subir el límite en el panel (aumenta la exposición a abusos; Supabase recomienda además activar captcha para anónimos).
 - Que parte de los alumnos use datos móviles (otra IP).
 - En una clase de 30 alumnos o menos no hace falta ningún cambio.
@@ -40,7 +40,7 @@ La primera versión daba dos «FALLA» falsos porque comparaba el recuento final
 node --env-file=.env scripts/concurrency-check.mjs race <CODIGO> 12 40
 node --env-file=.env scripts/concurrency-check.mjs dups <CODIGO>
 ```
-Antes, el profesor abre un trabajo (idealmente sin votos previos). Cuando el script muestre «YA», pulsa *Cerrar votación* en la app. Cada ejecución crea alumnos anónimos reales: 12 + 4 gastan 16 de las 30 altas por hora.
+Antes, el profesor abre un trabajo (idealmente sin votos previos). Cuando el script muestre «YA», pulsa *Cerrar votación* en la app. Cada ejecución crea alumnos anónimos reales: 12 + 4 gastan 16 de las altas por hora (30 por defecto; 60 en este proyecto desde el 2026-11-18).
 
 ## Datos de prueba que deja
 Usuarios anónimos, participantes y votos en la sesión de prueba. Borra esa sesión del proyecto cuando termines.

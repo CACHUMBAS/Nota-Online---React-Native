@@ -63,7 +63,7 @@ El **servidor es la autoridad**; deshabilitar un botón en el móvil no basta.
 ## Limitaciones conocidas
 - **Un voto por identidad anónima no garantiza un voto por persona:** borrar los datos de la app o cambiar de identidad permite votar de nuevo. No se promete protección absoluta.
 - **Sondeo, no Realtime:** la pantalla consulta al servidor cada 4 s mientras está activa y al volver a primer plano. No hay notificaciones push.
-- **Límite de alumnos anónimos de Supabase:** por defecto 30 altas por hora y por IP. En una clase de más de 30 alumnos en la misma red hay que subir ese límite en el panel (ver [docs/CONCURRENCY.md](docs/CONCURRENCY.md)).
+- **Límite de alumnos anónimos de Supabase:** por defecto 30 altas por hora y por IP; en el proyecto del autor se subió a 60 (2026-11-18) para una clase de hasta 40 alumnos. En un proyecto nuevo, o con clases mayores, hay que ajustarlo en *Authentication → Rate Limits* (ver [docs/CONCURRENCY.md](docs/CONCURRENCY.md) y ADR-011).
 - **Registro abierto:** con el registro de Supabase activado, cualquiera con la clave pública puede crear sus propias sesiones (no acceder a las ajenas). Detalle en [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
 - El profesor no puede unirse como alumno a su propia sesión (regla añadida, no un requisito de la asignatura).
 - No hay ponderaciones, comentarios, archivos ni chat.
