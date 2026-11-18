@@ -1,39 +1,42 @@
 # Estado del proyecto
 Actualizado: 2026-11-17
-Rama actual: chore/native-foundation
-Último commit local: ver `git log` (base Expo + reglas de dominio)
-Último commit remoto comprobado: ninguno (todavía no se ha subido nada a GitHub)
+Rama actual: feat/secure-voting (creada desde chore/native-foundation)
+Último commit: ver `git log --oneline -1` en la rama
+Último commit remoto comprobado: `chore/native-foundation` en d414da7 (verificado con `git ls-remote`). `feat/secure-voting`: ver sección de subida abajo.
 
 ## Requisitos y permisos confirmados
-- React Native obligatorio, entrega en ≤ 2 días, prioridad: estructura por componentes, claridad y funcionamiento.
+- React Native obligatorio, entrega en ≤ 2 días; prioridad: estructura por componentes, claridad y funcionamiento.
 - Android. Expo Go para desarrollo; falta confirmar si el profesor exige APK (no bloquea el desarrollo).
 - Ramas y commits pequeños. Repositorio: https://github.com/CACHUMBAS/Nota-Online---React-Native.git
-- Aprobado: Expo + TypeScript, roles profesor/alumno, Supabase (proyecto dedicado, nunca el de Lumemon), PGlite como devDependency para probar PostgreSQL en local.
-- NO autorizado todavía: dependencias de cliente (supabase-js, navegación, almacenamiento). Se piden en bloque aparte.
+- Aprobado: Expo + TypeScript, roles profesor/alumno, Supabase (proyecto dedicado, nunca el de Lumemon), PGlite como devDependency.
+- NO autorizado todavía: dependencias de cliente (supabase-js, navegación, almacenamiento de sesión).
 
-## Implementado y verificado
-- Base Expo + TypeScript estricta. `npm run typecheck`: OK (2026-11-17).
-- Reglas de dominio (`src/features/voting/domain/rules.ts`): `npm test` → 4/4 pruebas de `test/rules.test.ts` OK.
-- Aviso `MODULE_TYPELESS_PACKAGE_JSON` eliminado del script de pruebas con `--disable-warning` (ver DECISIONS ADR-004).
+## Implementado y verificado (2026-11-17)
+- Base Expo + TypeScript estricta: `npm run typecheck` OK.
+- Reglas de dominio (`src/features/voting/domain/rules.ts`): 4 pruebas OK.
+- Migración `supabase/migrations/202611170001_classroom.sql` aplicada sobre PostgreSQL real en memoria (PGlite): `npm run check` → typecheck OK y **9/9 pruebas OK**.
+  - `test/database.test.ts` (contrato original): permisos, ciclo de votación, reintentos, `anon` sin acceso.
+  - `test/database-integrity.test.ts` (nuevo): aislamiento entre sesiones, ocultación de resultados, restricciones propias de la BD, casos de acceso.
+  - Mutación comprobada: si el servidor mostrara la media con la votación abierta, 2 pruebas fallan.
 
 ## Implementado sin verificar
-- Nada.
-
-## Trabajo en curso
-- `test/database.test.ts` (sin commitear): prueba anticipada del backend. Falla ahora mismo con `ERR_MODULE_NOT_FOUND` porque PGlite no está instalado y no existe `supabase/migrations/202611170001_classroom.sql`. No se ha borrado ni desactivado.
+- La migración **no se ha ejecutado contra Supabase real** (el proyecto aún no existe). PGlite no es Supabase: simula `auth.uid()`/`auth.jwt()` y los roles.
+- Carreras reales (voto frente a cierre) razonadas por diseño (bloqueo de la fila de sesión), **no probadas con transacciones concurrentes** (PGlite tiene una sola conexión).
 
 ## No terminado
-- Migración SQL con RLS y funciones transaccionales, pantallas, navegación, cliente/servicios Supabase, autenticación, prueba en Android, APK (solo si se exige), README y guion de demo.
+- Cliente y servicios Supabase, autenticación, hooks, navegación, pantallas de profesor y alumno, sondeo cada 4 s.
+- Prueba en Android (Expo Go), APK solo si se exige, README final y guion de demostración.
 
-## Bloqueos y decisiones pendientes
-- Crear el proyecto Supabase "Nota Online" (plan Free) por el usuario; hasta entonces el código se desarrolla y prueba con PGlite.
-- Autorizar dependencias de cliente (navegación, supabase-js, almacenamiento de sesión).
-- Confirmar si se exige APK.
+## Bloqueos que requieren al usuario
+1. Crear el proyecto Supabase dedicado siguiendo `docs/SUPABASE_SETUP.md` y rellenar `.env` (solo URL y clave publishable).
+2. Autorizar las dependencias de cliente (lista en el último mensaje de la sesión).
+3. Confirmar si se exige APK.
 
 ## Siguiente paso concreto
-- Rama `feat/secure-voting`: instalar PGlite (devDependency), escribir la migración que cumpla `test/database.test.ts` y pasar la prueba.
+- Con las dependencias autorizadas: rama `feat/native-classroom`, cliente Supabase + servicios + hooks, y pantallas.
+- Mientras tanto, sin dependencias nuevas: componentes compartidos y tema.
 
 ## Limitaciones conocidas
-- Un voto por identidad anónima no garantiza un voto por persona (borrar datos o cambiar de identidad permite votar de nuevo). Se documenta, no se oculta.
-- Actualización por sondeo (cada 4 s en pantalla activa y al volver a primer plano), no Realtime.
+- Un voto por identidad anónima no garantiza un voto por persona (borrar datos o cambiar de identidad permite votar de nuevo).
+- Actualización por sondeo, no Realtime (ADR-005).
 - Una exportación del bundle Android no equivale a una app probada en Android ni a un APK.

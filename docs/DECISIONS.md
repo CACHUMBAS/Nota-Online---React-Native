@@ -29,4 +29,17 @@
 ## ADR-006: PGlite como devDependency para probar PostgreSQL localmente
 - **Fecha:** 2026-11-17
 - **Estado:** Autorizado expresamente por el usuario.
-- **Motivo:** Permite probar migración, permisos y transacciones sin depender de que el proyecto Supabase exista. Es PostgreSQL real (WASM), pero no es Supabase: RLS y roles se simulan con `auth.uid()`/`auth.jwt()` mínimos. La verificación contra Supabase real sigue pendiente de crear el proyecto.
+- **Motivo:** Permite probar migración, permisos y transacciones sin depender de que el proyecto Supabase exista. Es PostgreSQL real (WASM), pero no es Supabase: RLS y roles se simulan con `auth.uid()`/`auth.jwt()` mínimos. La verificación contra Supabase real sigue pendiente de crear el proyecto. Limitación: PGlite tiene una sola conexión, así que las carreras reales (voto frente a cierre) se razonan por diseño (bloqueo de la fila de la sesión) pero no se prueban con transacciones concurrentes.
+
+## ADR-007: El servidor es la autoridad; tablas privadas y API solo por funciones
+- **Fecha:** 2026-11-17
+- **Estado:** Decisión de implementación acorde a las reglas de integridad pedidas.
+- **Decisiones y motivo:**
+  - Tablas en el esquema `nota_private` (no expuesto), RLS activada sin políticas y sin privilegios para `anon`/`authenticated`. Todo pasa por funciones `SECURITY DEFINER` con `search_path` vacío, ejecutables solo por `authenticated`. Así no hay lectura directa de votos ajenos ni de agregados.
+  - Profesor = usuario no anónimo y propietario de la sesión (se comprueba en la tabla, nunca un indicador enviado por el móvil). Para que solo existan las cuentas preparadas hay que desactivar el registro abierto en Supabase (ver `SUPABASE_SETUP.md`).
+  - Alumno = usuario anónimo que se unió con el código. El código de sala solo permite entrar; no da permisos de profesor.
+  - El propietario no puede unirse como alumno a su propia sesión (`owner_cannot_join`): evita que el profesor vote con la misma cuenta. Es una regla añadida, no un requisito del profesor de la asignatura.
+  - Unicidad y coherencia en la base de datos: un voto por (trabajo, participante), nota 0–10, un solo trabajo abierto por sesión (índice parcial único) y claves compuestas para que un voto no pueda cruzar de sesión.
+  - Un reintento con la misma nota devuelve el voto existente (también tras cerrar); con otra nota, `already_voted`. Nunca se sobrescribe.
+  - Ocultación en el servidor: `average` solo con el trabajo cerrado; `vote_count` visible al profesor siempre y al alumno solo tras cerrar; `my_score` solo propio.
+  - Transiciones de trabajo: `pending → open → closed`. El cierre es irreversible. Cerrar la sesión cierra el trabajo abierto.
