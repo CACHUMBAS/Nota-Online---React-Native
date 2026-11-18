@@ -15,14 +15,15 @@ Los nombres de los menús pueden cambiar un poco con el tiempo; si algo no coinc
 3. *Create new project* y espera un par de minutos hasta que termine de prepararse.
 
 ## 2. Crear las tablas y funciones (SQL)
-Se hace **dos veces, en este orden**, con un archivo cada vez:
+Se hace **tres veces, en este orden**, con un archivo cada vez (si tu proyecto ya tenía la 001 y la 002, basta con la 003):
 
 1. Menú lateral → **SQL Editor** → *New query*.
 2. Abre en tu ordenador `supabase/migrations/202611170001_classroom.sql`, selecciona todo (`Ctrl+A`), copia (`Ctrl+C`), pega en el editor de Supabase y pulsa **Run**.
    - Resultado esperado: *Success. No rows returned*.
 3. Repite con una consulta nueva (*New query*) para `supabase/migrations/202611170002_list_classrooms.sql`.
+4. Repite otra vez para `supabase/migrations/202611180003_delete_classroom.sql` (es la que activa el botón **Borrar sesión**; sin ella el botón dará error).
 
-Comprobación: *Database → Functions* debe listar `create_classroom`, `add_classwork`, `set_classwork_state`, `close_classroom`, `join_classroom`, `submit_score`, `classroom_snapshot` y `list_classrooms`. En *Table Editor* no verás tablas de la app: están a propósito en un esquema privado.
+Comprobación: *Database → Functions* debe listar `create_classroom`, `add_classwork`, `set_classwork_state`, `close_classroom`, `join_classroom`, `submit_score`, `classroom_snapshot`, `list_classrooms` y `delete_classroom`. En *Table Editor* no verás tablas de la app: están a propósito en un esquema privado.
 
 ## 3. Usuarios (autenticación)
 1. Menú lateral → **Authentication** → **Sign In / Providers**.

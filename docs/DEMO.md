@@ -24,6 +24,7 @@ Necesitas **dos instancias** de la app con Expo Go: **A = profesor** y **B = alu
 | 11 | B | (se actualiza solo) | Sección «Resultados» con la media y «Tu nota» |
 | 12 | A | Abrir «Proyecto dos» y cerrarlo sin votos | Muestra **«Sin votos»**, no un 0 |
 | 13 | A | *Cerrar la sesión de clase* → confirmar | La sesión queda cerrada; B ve «La sesión ha terminado» |
+| 14 | A | *Borrar sesión* (solo aparece con la sesión cerrada) → confirmar | Vuelve a «Mis sesiones» sin esa sesión; con su código, B ya no puede entrar (`session_not_found`). **Paso aún no probado en el móvil** |
 
 ## Comprobar el duplicado y los permisos (en el ordenador)
 La interfaz ya impide votar dos veces, pero la garantía está en el servidor. Se enseña con las pruebas:
