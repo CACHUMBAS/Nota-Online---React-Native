@@ -1,7 +1,7 @@
 # Estado del proyecto
 Actualizado: 2026-11-18
-Rama de trabajo más reciente: `feat/delete-session` (desde `main`; ver el PR correspondiente)
-`main` en `28aa63b` al escribir esto (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo y la corrección del estado, y todas se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
+Rama de trabajo más reciente: `docs/delete-session-verified` (desde `main`; ver el PR correspondiente)
+`main` en `aa2333a` al escribir esto (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo y la corrección del estado, y todas se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
 
 ## Requisitos y permisos confirmados
 - React Native obligatorio, entrega en ≤ 2 días; prioridad: estructura por componentes, claridad y funcionamiento.
@@ -12,7 +12,7 @@ Rama de trabajo más reciente: `feat/delete-session` (desde `main`; ver el PR co
 ## Implementado y verificado (2026-11-17)
 - `npm run typecheck`: OK. `npm test`: **16/16** (dominio, validadores y errores del cliente, 10 pruebas de base de datos con PGlite).
 - Migraciones `001` (tablas, RPC, permisos), `002` (`list_classrooms`) y `003` (`delete_classroom`) aplicadas sobre PostgreSQL real en memoria (PGlite).
-- **Borrar sesión** (2026-11-18, ADR-012): función del servidor + botón en el panel del profesor, solo con la sesión cerrada y solo para el propietario. 17 de 17 pruebas, comprobada por mutación, bundle de Android exportado. **Pendiente: aplicar la migración 003 en el Supabase real (SQL Editor) y probar el botón en el móvil.**
+- **Borrar sesión** (2026-11-18, ADR-012): función del servidor + botón en el panel del profesor, solo con la sesión cerrada y solo para el propietario. 17 de 17 pruebas, comprobada por mutación, bundle de Android exportado. **Migración 003 aplicada en el Supabase real el 2026-11-18** (SQL Editor: «Success»; verificada desde fuera: sin sesión HTTP 401, que antes era 404, y un alumno anónimo con un id inexistente recibe `access_denied`). **El botón lo probó el usuario en su móvil y funciona** (comprobado por el usuario, no observado por Claude); Claude verificó en el servidor que la sesión borrada ya no existe (`session_not_found` con su código).
 - `npm run export:android`: el bundle se genera (935 módulos, `.hbc` de 2,7 MB). Eso demuestra que Metro resuelve la app, **no** que funcione en un móvil.
 - `npx expo install --check`: dependencias compatibles con el SDK 58.
 - **Contra el Supabase real** (2026-11-17, con la clave publishable por la API REST, sin la app):
@@ -23,7 +23,7 @@ Rama de trabajo más reciente: `feat/delete-session` (desde `main`; ver el PR co
 - **Recorrido profesor + alumno contra el Supabase real** (2026-11-17), profesor en un Android con Expo Go y alumno simulado por la API REST (no por la interfaz del alumno):
   - Profesor en el móvil: Expo Go admite el SDK 58 y la app arranca leyendo el `.env`; acceso con la cuenta de profesor; crear sesión (código `LE5SXN`); añadir un trabajo; abrir la votación; ver «Han votado: 1 voto» sin media (sondeo); cerrar y ver «8,0 · 1 voto».
   - Alumno (API): unirse con el código (idempotente, también en minúsculas y con espacio); voto 8 aceptado; reintento del mismo 8 devuelve 8 sin duplicar; cambiar a 3 → `already_voted`; nota 11 → `invalid_score`; con la votación abierta no ve recuento ni media; tras cerrar ve `vote_count=1`, `average=8` y su `my_score=8`; un alumno que llega tarde y vota → `voting_closed`.
-  - Datos de prueba que quedan en el proyecto: la sesión «Clase pa probar» con 4 trabajos cerrados, unos 28 participantes de prueba y unos 30 usuarios anónimos. El usuario la **cerró** el 2026-11-18, pero cerrar no borra: sigue apareciendo en «Mis sesiones» con sus datos de prueba. Conviene borrarla antes de la demo, de forma irreversible: con el botón «Borrar sesión» una vez aplicada la migración 003 en el Supabase real.
+  - Datos de prueba: la sesión «Clase pa probar» (con sus trabajos, participantes y votos) **se borró el 2026-11-18** con el botón «Borrar sesión»; ya no existe (`session_not_found`). Siguen en el proyecto los usuarios anónimos de prueba creados por las pruebas (unos 30 o más, en *Authentication → Users*): inofensivos y sin datos asociados, pero pueden borrarse a mano. No se ha comprobado si el profesor tiene otras sesiones de prueba en «Mis sesiones».
   - **Interfaz del alumno en el móvil** (comprobada por el usuario, no observada por Claude): entrar con el código, votar y, tras cerrar Expo Go por completo y reabrirlo, volver a la sesión guardada mostrando su voto (reanudación).
   - NO probado: la apariencia en distintos tamaños de pantalla y con el teclado abierto, TalkBack y varias sesiones a la vez. Los detalles de lo que el usuario vio en cada pantalla del alumno no están registrados paso a paso.
 - **Pruebas en el móvil del 2026-11-18** (comprobadas por el usuario, no observadas por Claude):
