@@ -1,5 +1,5 @@
 import { AppError } from '../../../shared/lib/errors.ts';
-import type { ClassroomSession, Project, ProjectStatus, SessionSnapshot } from '../types.ts';
+import type { ClassroomSession, Project, ProjectStatus, SessionSnapshot } from '../../../shared/domain/classroom.ts';
 
 /**
  * El servidor devuelve JSON sin tipo. Estas funciones comprueban la forma antes de que

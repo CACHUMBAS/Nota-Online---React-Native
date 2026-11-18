@@ -3,7 +3,7 @@ import { Button } from '../../../shared/components/Button.tsx';
 import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
 import { ResultSummary } from '../../results/components/ResultSummary.tsx';
 import { formatVoteCount } from '../../voting/domain/rules.ts';
-import type { Project } from '../../sessions/types.ts';
+import type { Project } from '../../../shared/domain/classroom.ts';
 import { StatusBadge } from './StatusBadge.tsx';
 
 interface ProjectCardProps {

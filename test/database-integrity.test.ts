@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createDb, IDS } from './support/pglite.ts';
-import type { ClassroomSession, SessionSnapshot } from '../src/features/sessions/types.ts';
+import type { ClassroomSession, SessionSnapshot } from '../src/shared/domain/classroom.ts';
 
 test('aislamiento entre sesiones: nadie opera ni lee en una sesión ajena', async () => {
   const t = await createDb();

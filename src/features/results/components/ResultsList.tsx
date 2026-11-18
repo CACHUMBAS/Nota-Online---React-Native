@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
-import type { Project } from '../../sessions/types.ts';
+import type { Project } from '../../../shared/domain/classroom.ts';
 import { ResultSummary } from './ResultSummary.tsx';
 
 interface ResultsListProps {

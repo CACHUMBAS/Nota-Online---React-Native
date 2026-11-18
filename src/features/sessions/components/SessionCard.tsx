@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { colors, fontSize, radius, spacing, touchTarget } from '../../../shared/theme/theme.ts';
-import type { ClassroomSession } from '../types.ts';
+import type { ClassroomSession } from '../../../shared/domain/classroom.ts';
 
 interface SessionCardProps {
   session: ClassroomSession;

@@ -1,4 +1,4 @@
-import type { Project, ProjectStatus } from '../../sessions/types.ts';
+import type { Project, ProjectStatus } from '../../../shared/domain/classroom.ts';
 
 /** El trabajo que se está votando ahora. El servidor garantiza que como máximo hay uno. */
 export function findOpenProject(projects: readonly Project[]): Project | null {

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../shared/components/Button.tsx';
 import { Notice } from '../../../shared/components/StateViews.tsx';
 import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
-import type { Project } from '../../sessions/types.ts';
+import type { Project } from '../../../shared/domain/classroom.ts';
 import { ScoreSelector } from './ScoreSelector.tsx';
 
 interface VotePanelProps {

@@ -1,6 +1,6 @@
 import { callRpc } from '../../../shared/lib/rpc.ts';
 import { parseClassroom, parseClassroomList, parseId, parseSnapshot } from '../domain/parsers.ts';
-import type { ClassroomSession, SessionSnapshot } from '../types.ts';
+import type { ClassroomSession, SessionSnapshot } from '../../../shared/domain/classroom.ts';
 
 export async function createClassroom(title: string): Promise<ClassroomSession> {
   return parseClassroom(await callRpc('create_classroom', { p_title: title }));
