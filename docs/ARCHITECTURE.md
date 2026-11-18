@@ -9,12 +9,16 @@ src/
   features/
     auth/                       # AuthContext (estado de la sesión), authService, pantallas Home/Login/Setup, TeacherLoginForm
     sessions/                   # sesiones de clase: servicios, hooks de carga y sondeo, JoinForm/SessionForm/SessionCard,
-      domain/parsers.ts         #   pantallas TeacherSessions/TeacherRoom/StudentJoin; parsers = validación de respuestas
+      domain/                   #   pantallas TeacherSessions/TeacherRoom/StudentJoin; domain: code.ts (código de sala) y
+                                #   parsers.ts (validación de las respuestas de sesión)
     projects/                   # trabajos: ProjectCard/StatusBadge/ProjectForm, projectsService, domain/projects.ts
-    voting/                     # voto: ScoreSelector/VotePanel, votingService, StudentRoomScreen, domain/rules.ts (reglas puras)
+    voting/                     # voto: ScoreSelector/VotePanel, votingService, StudentRoomScreen, domain/rules.ts (validScore)
     results/                    # ResultSummary/ResultsList (media, «Sin votos»)
   shared/
     components/                 # Button, FormField, Screen, estados (carga/error/vacío/aviso), HeaderButton
+    domain/                     # contratos y reglas puras que usan varias funcionalidades:
+                                #   classroom.ts (tipos), text.ts (validar textos), format.ts (media y nº de votos),
+                                #   parsers.ts (piezas básicas para validar respuestas del servidor)
     hooks/                      # useAsyncAction (sin doble envío), useAppActive
     lib/                        # supabase (cliente), rpc (única puerta al servidor), errors (códigos tipados), config, confirm, validation
     theme/                      # colores, espacios, tipografía
@@ -30,6 +34,14 @@ test/                           # dominio y cliente (Node) + base de datos con P
 | Hook | Carga, sondeo, estado de acciones (en curso/error) | Reglas de negocio |
 | Servicio | Llama a una función del servidor con `callRpc` y valida la respuesta | Estado de interfaz |
 | Dominio | Funciones puras (nota 0–10, código, textos, formato de media, parsers) | Depender de React Native |
+
+## Reglas de dependencia (comprobadas con el grafo real de imports, 2026-11-18)
+1. **`shared` no depende de ninguna funcionalidad.** Lo que usan varias funcionalidades (tipos, validación de textos, formato de la media, piezas de los parsers) vive en `shared/domain`.
+2. **Las funcionalidades no forman ciclos.** Las dependencias que quedan son unidireccionales: `voting → sessions → projects → results` y `sessions → auth`.
+3. **Solo se componen en las pantallas** (y en un par de flujos): `TeacherRoomScreen` reúne piezas de `projects`, `StudentRoomScreen` las de `projects`, `results` y `sessions`. La única excepción entre componentes es `ProjectCard`, que muestra un `ResultSummary` de `results`.
+4. **Ningún componente importa un servicio** ni el cliente de Supabase.
+
+Un cambio posterior debe mantener estas cuatro reglas. Se puede volver a comprobar leyendo los imports de cada carpeta.
 
 ## Cómo se sabe quién es quién
 - **Profesor**: usuario no anónimo (cuenta preparada en Supabase) y propietario de la sesión. Lo comprueba el servidor en cada función; el móvil no envía ningún «soy profesor».

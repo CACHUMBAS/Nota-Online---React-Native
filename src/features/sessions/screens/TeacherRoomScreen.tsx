@@ -14,7 +14,7 @@ import { findOpenProject } from '../../projects/domain/projects.ts';
 import { addProject, setProjectState } from '../../projects/services/projectsService.ts';
 import { useClassroomSnapshot } from '../hooks/useClassroomSnapshot.ts';
 import { closeClassroom } from '../services/sessionsService.ts';
-import type { Project } from '../types.ts';
+import type { Project } from '../../../shared/domain/classroom.ts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TeacherRoom'>;
 

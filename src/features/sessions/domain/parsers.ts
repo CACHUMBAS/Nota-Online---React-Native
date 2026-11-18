@@ -1,48 +1,7 @@
-import { AppError } from '../../../shared/lib/errors.ts';
-import type { ClassroomSession, Project, ProjectStatus, SessionSnapshot } from '../types.ts';
+import { asRecord, count, countOrNull, flag, invalid, text } from '../../../shared/domain/parsers.ts';
+import type { ClassroomSession, Project, ProjectStatus, SessionSnapshot } from '../../../shared/domain/classroom.ts';
 
-/**
- * El servidor devuelve JSON sin tipo. Estas funciones comprueban la forma antes de que
- * la respuesta llegue a hooks o componentes; si algo no encaja se lanza `invalid_response`.
- */
-type UnknownRecord = Record<string, unknown>;
-
-function invalid(): AppError {
-  return new AppError('invalid_response');
-}
-
-function isRecord(value: unknown): value is UnknownRecord {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function asRecord(value: unknown): UnknownRecord {
-  if (!isRecord(value)) throw invalid();
-  return value;
-}
-
-function text(record: UnknownRecord, key: string): string {
-  const value = record[key];
-  if (typeof value !== 'string') throw invalid();
-  return value;
-}
-
-function count(record: UnknownRecord, key: string): number {
-  const value = record[key];
-  if (typeof value !== 'number' || !Number.isFinite(value)) throw invalid();
-  return value;
-}
-
-function countOrNull(record: UnknownRecord, key: string): number | null {
-  const value = record[key];
-  if (value === null) return null;
-  return count(record, key);
-}
-
-function flag(record: UnknownRecord, key: string): boolean {
-  const value = record[key];
-  if (typeof value !== 'boolean') throw invalid();
-  return value;
-}
+/** Validación de las respuestas de sesión: la sesión, sus trabajos y la instantánea completa. */
 
 function projectStatus(value: string): ProjectStatus {
   if (value === 'pending' || value === 'open' || value === 'closed') return value;
@@ -90,16 +49,4 @@ export function parseSnapshot(value: unknown): SessionSnapshot {
     participant_count: count(record, 'participant_count'),
     projects: projects.map(parseProject),
   };
-}
-
-/** Identificador devuelto por funciones como add_classwork o join_classroom. */
-export function parseId(value: unknown): string {
-  if (typeof value !== 'string' || value.length === 0) throw invalid();
-  return value;
-}
-
-/** Nota devuelta por submit_score tras aceptarla el servidor. */
-export function parseScore(value: unknown): number {
-  if (typeof value !== 'number' || !Number.isInteger(value)) throw invalid();
-  return value;
 }

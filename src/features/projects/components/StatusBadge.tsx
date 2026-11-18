@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, fontSize, radius, spacing } from '../../../shared/theme/theme.ts';
-import type { ProjectStatus } from '../../sessions/types.ts';
+import type { ProjectStatus } from '../../../shared/domain/classroom.ts';
 import { STATUS_LABELS } from '../domain/projects.ts';
 
 const BACKGROUNDS: Record<ProjectStatus, string> = {

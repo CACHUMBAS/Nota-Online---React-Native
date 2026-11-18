@@ -4,7 +4,7 @@ import { useAppActive } from '../../../shared/hooks/useAppActive.ts';
 import { POLL_INTERVAL_MS } from '../../../shared/lib/config.ts';
 import { toAppError, type AppError } from '../../../shared/lib/errors.ts';
 import { getSnapshot } from '../services/sessionsService.ts';
-import type { SessionSnapshot } from '../types.ts';
+import type { SessionSnapshot } from '../../../shared/domain/classroom.ts';
 
 /**
  * Mantiene al día el estado de una sesión consultando al servidor (ADR-005, no es Realtime):

@@ -1,6 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validScore, normalizeCode, cleanText, formatAverage } from '../src/features/voting/domain/rules.ts';
+import { validScore } from '../src/features/voting/domain/rules.ts';
+import { normalizeCode } from '../src/features/sessions/domain/code.ts';
+import { cleanText } from '../src/shared/domain/text.ts';
+import { formatAverage } from '../src/shared/domain/format.ts';
 
 test('acepta los extremos y rechaza notas inválidas sin coerción', () => {
   assert.equal(validScore(0), true); assert.equal(validScore(10), true);

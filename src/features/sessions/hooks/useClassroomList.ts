@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { toAppError, type AppError } from '../../../shared/lib/errors.ts';
 import { listClassrooms } from '../services/sessionsService.ts';
-import type { ClassroomSession } from '../types.ts';
+import type { ClassroomSession } from '../../../shared/domain/classroom.ts';
 
 /** Sesiones del profesor. Se recargan cada vez que la pantalla recupera el foco. */
 export function useClassroomList() {
