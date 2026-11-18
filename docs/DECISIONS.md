@@ -63,5 +63,15 @@
 - **Problema:** el grafo de imports mostraba ciclos entre funcionalidades (por ejemplo `sessions ↔ voting` y `projects ↔ sessions`). Las causas eran piezas mal ubicadas: los tipos `Project`/`SessionSnapshot` vivían en `sessions`, y validaciones y formato genéricos (`cleanText`, `formatAverage`…) vivían en `voting/domain/rules.ts`.
 - **Decisión:** los tipos pasan a `shared/domain/classroom.ts`; el texto a `shared/domain/text.ts`; el formato a `shared/domain/format.ts`; las piezas básicas de los parsers (y `parseId`/`parseScore`) a `shared/domain/parsers.ts`; `normalizeCode` a `sessions/domain/code.ts`; `voting/domain/rules.ts` queda solo con `validScore`.
 - **Resultado medido con el grafo de imports:** `shared` no depende de ninguna funcionalidad y no hay ciclos. Quedan seis dependencias unidireccionales, casi todas en pantallas (composición). Detalle en `ARCHITECTURE.md`.
-- **Comprobación:** `typecheck` sin errores, 16 de 16 pruebas y exportación del bundle Android (939 módulos). No se ha vuelto a probar la interfaz en el móvil tras el refactor.
+- **Comprobación:** `typecheck` sin errores, 16 de 16 pruebas y exportación del bundle Android (939 módulos). Tras fusionar el refactor, el usuario abrió la app en su móvil y confirmó que funciona (comprobado por el usuario, no observado por Claude).
 - **Límite:** `RootNavigator` y `AuthContext` siguen tocando el cliente o un servicio directamente; no son componentes visuales y se dejan así.
+
+## ADR-011: Límite de altas anónimas de Supabase subido de 30 a 60 por hora
+- **Fecha:** 2026-11-18
+- **Estado:** Aprobado por el usuario («Sí, súbelo a 60»); cambio de configuración del proyecto Supabase, no del código.
+- **Problema:** cada alumno que entra por primera vez crea un usuario anónimo, y Supabase limita esas altas a 30 por hora y por IP (valor leído en *Authentication → Rate Limits*). En una clase de más de 30 alumnos en la misma wifi, los últimos no podrían entrar durante esa hora. El usuario quiere atender clases de hasta 40 alumnos.
+- **Decisión:** subir «Rate limit for anonymous users» a **60**, no a 40, para dejar margen a reentradas (alguien que borra los datos de la app o reinstala la gasta otra alta). Se cambió solo ese campo; el resto de límites quedaron como estaban (comprobado al recargar el panel).
+- **Contrapartida:** un límite más alto permite crear más usuarios anónimos por hora desde una misma IP, lo que facilita el abuso. Supabase recomienda además captcha para anónimos; no está activado ni integrado en la app.
+- **Reversible:** se puede devolver a 30 en el mismo panel.
+- **Sin probar:** que el límite nuevo funcione en la práctica. Comprobarlo exigiría crear más de 30 alumnos anónimos desde una IP y dejaría más datos de prueba.
+- **No confundir** con un tope de alumnos por sesión: la app y la base de datos no limitan cuántos alumnos entran en una sesión.

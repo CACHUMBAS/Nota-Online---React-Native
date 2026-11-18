@@ -1,7 +1,7 @@
 # Estado del proyecto
 Actualizado: 2026-11-18
-Rama de trabajo más reciente: `docs/ui-tests-status` (desde `main`; ver el PR correspondiente)
-`main` en `7e213de` al escribir esto (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo y la corrección del estado, y todas se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
+Rama de trabajo más reciente: `docs/rate-limit-60` (desde `main`; ver el PR correspondiente)
+`main` en `9c5660e` al escribir esto (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo y la corrección del estado, y todas se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
 
 ## Requisitos y permisos confirmados
 - React Native obligatorio, entrega en ≤ 2 días; prioridad: estructura por componentes, claridad y funcionamiento.
@@ -22,14 +22,14 @@ Rama de trabajo más reciente: `docs/ui-tests-status` (desde `main`; ver el PR c
 - **Recorrido profesor + alumno contra el Supabase real** (2026-11-17), profesor en un Android con Expo Go y alumno simulado por la API REST (no por la interfaz del alumno):
   - Profesor en el móvil: Expo Go admite el SDK 58 y la app arranca leyendo el `.env`; acceso con la cuenta de profesor; crear sesión (código `LE5SXN`); añadir un trabajo; abrir la votación; ver «Han votado: 1 voto» sin media (sondeo); cerrar y ver «8,0 · 1 voto».
   - Alumno (API): unirse con el código (idempotente, también en minúsculas y con espacio); voto 8 aceptado; reintento del mismo 8 devuelve 8 sin duplicar; cambiar a 3 → `already_voted`; nota 11 → `invalid_score`; con la votación abierta no ve recuento ni media; tras cerrar ve `vote_count=1`, `average=8` y su `my_score=8`; un alumno que llega tarde y vota → `voting_closed`.
-  - Datos de prueba que quedan en el proyecto: la sesión «Clase pa probar» con 4 trabajos cerrados, unos 28 participantes de prueba y unos 30 usuarios anónimos. Conviene borrar esa sesión antes de la demo.
+  - Datos de prueba que quedan en el proyecto: la sesión «Clase pa probar» con 4 trabajos cerrados, unos 28 participantes de prueba y unos 30 usuarios anónimos. El usuario la **cerró** el 2026-11-18, pero cerrar no borra: sigue apareciendo en «Mis sesiones» con sus datos de prueba. Conviene borrarla (en la base de datos, de forma irreversible) antes de la demo.
   - **Interfaz del alumno en el móvil** (comprobada por el usuario, no observada por Claude): entrar con el código, votar y, tras cerrar Expo Go por completo y reabrirlo, volver a la sesión guardada mostrando su voto (reanudación).
   - NO probado: la apariencia en distintos tamaños de pantalla y con el teclado abierto, TalkBack y varias sesiones a la vez. Los detalles de lo que el usuario vio en cada pantalla del alumno no están registrados paso a paso.
 - **Pruebas en el móvil del 2026-11-18** (comprobadas por el usuario, no observadas por Claude):
   - **«Sin votos»:** un trabajo abierto y cerrado sin ningún voto muestra «Sin votos» en el panel del profesor, no `0,0`. Claude lo verificó además en el servidor: el trabajo quedó `closed` con `vote_count = 0` y `average` nulo. No se confirmó la pantalla de resultados del alumno.
   - **Corte de red al votar (alumno):** en modo avión, «Confirmar voto» no envía nada y muestra un error de conexión con el servidor; la nota elegida **sigue seleccionada**; al quitar el modo avión y confirmar de nuevo, el voto se registra. Esta prueba cubre «la petición no sale del móvil». **No** cubre «el voto llega al servidor y se pierde la respuesta»: la app vuelve a consultar el estado tras cada envío y reenviar la misma nota es seguro (probado contra el servidor real con envíos paralelos), pero ese caso no se ha provocado en un dispositivo.
 - **Concurrencia contra el Supabase real** (2026-11-18; detalle y límites en [docs/CONCURRENCY.md](CONCURRENCY.md); script en `scripts/concurrency-check.mjs`): envíos paralelos duplicados de un mismo alumno → un único voto y ninguna sobrescritura (`already_voted`); 12 alumnos votando casi a la vez, todos aceptados; recuento y media finales coinciden con los votos aceptados (13 votos / 2,538… en «Concurrencia A»; 4 votos / 5,25 en «Concurrencia B»); ningún voto aceptado tras ver el cierre. **No se estresó el instante exacto de la carrera voto↔cierre** (el cierre lo pulsa una persona y cayó lejos de los votos).
-- **Hallazgo:** Supabase limita los inicios de sesión anónimos a 30 por hora y por IP (valor leído en el panel). En una clase de más de 30 alumnos en la misma wifi, el 31.º no podría entrar durante esa hora. Se puede subir en *Authentication → Rate Limits* (decisión del usuario; no se ha tocado).
+- **Hallazgo:** Supabase limita los inicios de sesión anónimos a 30 por hora y por IP (valor leído en el panel). En una clase de más de 30 alumnos en la misma wifi, el 31.º no podría entrar durante esa hora. **Resuelto el 2026-11-18:** el usuario quiere atender una clase de hasta 40 alumnos y Claude subió ese límite a **60 por hora** en *Authentication → Rate Limits* (valor verificado recargando el panel; los otros límites no cambiaron). **No se ha probado el efecto real** (exigiría crear más de 30 alumnos anónimos). Ver ADR-011.
 
 ## Implementado sin verificar
 - La interfaz se ejecutó en un Android con Expo Go (profesor y alumno, ver arriba), pero **sin pruebas automáticas de componentes**: lo comprobado en el móvil no queda registrado paso a paso.
@@ -63,12 +63,12 @@ Verificado con Git: las cuatro ramas están contenidas en `origin/main` y el ár
 ## Siguiente paso concreto
 - Probar lo que falta: otros tamaños de pantalla, teclado abierto y TalkBack; después revisar `docs/DEMO.md` con lo que se observe en el móvil.
 - Decidir con el profesor si se exige un APK (EAS Build o compilación local).
-- Decidir si se sube el límite de inicios de sesión anónimos de Supabase para clases de más de 30 alumnos (ver el hallazgo arriba).
+- (Hecho) Límite de inicios de sesión anónimos de Supabase subido a 60 por hora para una clase de hasta 40 alumnos (ver el hallazgo arriba y ADR-011).
 
 ## Limitaciones conocidas
 - Un voto por identidad anónima no garantiza un voto por persona (borrar datos de la app o cambiar de identidad permite votar otra vez).
 - Actualización por sondeo cada 4 s, no Realtime (ADR-005).
-- Límite de Supabase: 30 inicios de sesión anónimos por hora y por IP (ver «Concurrencia contra el Supabase real»): una clase de más de 30 alumnos en la misma red necesita subir ese límite.
+- Límite de Supabase de altas anónimas: 30 por hora y por IP por defecto; en este proyecto está en 60 (efecto real sin probar). Una clase mayor de lo previsto, o un proyecto nuevo, necesita ajustarlo (ver «Concurrencia contra el Supabase real» y ADR-011).
 - Regla añadida no pedida por la asignatura: el profesor no puede unirse como alumno a su propia sesión (ADR-007).
 - No hay pruebas automáticas de componentes (ADR-008).
 - Con `.env` mal rellenado la app no puede diagnosticar la causa; mostrará errores de conexión.
