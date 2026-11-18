@@ -1,5 +1,5 @@
 import { callRpc } from '../../../shared/lib/rpc.ts';
-import { parseScore } from '../../sessions/domain/parsers.ts';
+import { parseScore } from '../../../shared/domain/parsers.ts';
 import { validScore } from '../domain/rules.ts';
 import { AppError } from '../../../shared/lib/errors.ts';
 

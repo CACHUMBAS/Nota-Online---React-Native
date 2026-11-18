@@ -1,5 +1,5 @@
 import { callRpc } from '../../../shared/lib/rpc.ts';
-import { parseId } from '../../sessions/domain/parsers.ts';
+import { parseId } from '../../../shared/domain/parsers.ts';
 import type { ProjectStatus } from '../../../shared/domain/classroom.ts';
 
 export async function addProject(classroomId: string, title: string, author: string): Promise<string> {

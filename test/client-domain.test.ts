@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { AppError, codeFromMessage, toAppError, ERROR_MESSAGES } from '../src/shared/lib/errors.ts';
-import { parseSnapshot, parseClassroomList, parseId, parseScore } from '../src/features/sessions/domain/parsers.ts';
+import { parseSnapshot, parseClassroomList } from '../src/features/sessions/domain/parsers.ts';
+import { parseId, parseScore } from '../src/shared/domain/parsers.ts';
 import { findOpenProject, closedProjects } from '../src/features/projects/domain/projects.ts';
 import { cleanOptionalText } from '../src/shared/domain/text.ts';
 import { formatVoteCount } from '../src/shared/domain/format.ts';
