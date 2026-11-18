@@ -43,3 +43,16 @@
   - Un reintento con la misma nota devuelve el voto existente (también tras cerrar); con otra nota, `already_voted`. Nunca se sobrescribe.
   - Ocultación en el servidor: `average` solo con el trabajo cerrado; `vote_count` visible al profesor siempre y al alumno solo tras cerrar; `my_score` solo propio.
   - Transiciones de trabajo: `pending → open → closed`. El cierre es irreversible. Cerrar la sesión cierra el trabajo abierto.
+
+## ADR-008: Dependencias de cliente y navegación
+- **Fecha:** 2026-11-17
+- **Estado:** Autorizado por el usuario («Sí, instálalas»).
+- **Instaladas con `expo install` (SDK 58):** `@supabase/supabase-js`, `@react-native-async-storage/async-storage`, `react-native-url-polyfill`, `@react-navigation/native`, `@react-navigation/native-stack`, `react-native-screens`, `react-native-safe-area-context`. `npx expo install --check`: «Dependencies are up to date».
+- **Motivo de la navegación:** React Navigation con stack nativo; son pocas pantallas y evita las rutas basadas en archivos de Expo Router. No se añade gestor de estado: bastan estado local, un contexto pequeño para la sesión y hooks.
+- **`react-native-url-polyfill`:** la guía de Supabase para React Native lo recomienda. No se ha comprobado en un dispositivo si es imprescindible con esta versión de React Native; se mantiene por prudencia.
+- **Sin pruebas de componentes:** no se ha autorizado `jest-expo` ni Testing Library. La lógica está en dominio puro (probado); la interfaz se prueba a mano en Android.
+
+## ADR-009: `list_classrooms` y reanudación de sesión
+- **Fecha:** 2026-11-17
+- **Estado:** Decisión de implementación.
+- **Motivo:** el profesor debe poder recuperar una votación abierta aunque borre los datos locales; por eso hay una función servidor que lista solo sus sesiones (migración `002`). El alumno reanuda su sala con su identidad anónima y la última sala recordada.

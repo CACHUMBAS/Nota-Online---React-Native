@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 
 export const IDS = {
@@ -19,7 +19,12 @@ export async function createDb() {
     CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     CREATE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$ SELECT jsonb_build_object('is_anonymous',current_setting('request.jwt.claim.anonymous',true)::boolean) $$;
     GRANT USAGE ON SCHEMA auth TO authenticated; GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA auth TO authenticated;`);
-  await db.exec(await readFile(new URL('../../supabase/migrations/202611170001_classroom.sql', import.meta.url), 'utf8'));
+  // Se aplican todas las migraciones en orden de nombre, igual que haría Supabase.
+  const migrationsDir = new URL('../../supabase/migrations/', import.meta.url);
+  const migrations = (await readdir(migrationsDir)).filter((name) => name.endsWith('.sql')).sort();
+  for (const name of migrations) {
+    await db.exec(await readFile(new URL(name, migrationsDir), 'utf8'));
+  }
 
   /** Cambia la identidad con la que se ejecutan las siguientes llamadas (rol `authenticated`). */
   async function as(id: string, anonymous: boolean): Promise<void> {

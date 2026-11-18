@@ -1,7 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider } from './src/features/auth/AuthContext.tsx';
+import { RootNavigator } from './src/navigation/RootNavigator.tsx';
 
 export default function App() {
-  return <View style={styles.screen}><StatusBar style="dark" /><Text style={styles.title}>Nota Online</Text><Text>Una voz para cada trabajo.</Text></View>;
+  return (
+    <SafeAreaProvider>
+      <AuthProvider>
+        <StatusBar style="dark" />
+        <RootNavigator />
+      </AuthProvider>
+    </SafeAreaProvider>
+  );
 }
-const styles = StyleSheet.create({screen:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'#f5f7fb'},title:{fontSize:32,fontWeight:'800',color:'#172947'}});
