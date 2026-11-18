@@ -18,6 +18,7 @@ export const ERROR_MESSAGES = {
   voting_closed: 'La votación de este trabajo ya está cerrada.',
   voting_not_open: 'Este trabajo todavía no está abierto a votación.',
   session_closed: 'La sesión ya está cerrada.',
+  session_not_closed: 'Solo se pueden borrar sesiones cerradas. Cierra la sesión primero.',
   session_not_found: 'No existe ninguna sesión con ese código.',
   owner_cannot_join: 'No puedes entrar como alumno a una sesión que has creado.',
   code_generation_failed: 'No se pudo generar el código de la sesión. Inténtalo de nuevo.',

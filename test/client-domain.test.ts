@@ -14,6 +14,7 @@ const project = (over: Record<string, unknown>) =>
 test('los códigos del servidor se traducen y lo demás cae en un error genérico', () => {
   assert.equal(codeFromMessage('already_voted'), 'already_voted');
   assert.equal(codeFromMessage('  voting_closed '), 'voting_closed');
+  assert.equal(codeFromMessage('session_not_closed'), 'session_not_closed');
   assert.equal(codeFromMessage('Invalid login credentials'), 'invalid_credentials');
   assert.equal(codeFromMessage('Anonymous sign-ins are disabled'), 'anonymous_disabled');
   assert.equal(codeFromMessage('TypeError: Network request failed'), 'connection');

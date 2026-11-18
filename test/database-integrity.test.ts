@@ -157,6 +157,64 @@ test('list_classrooms devuelve solo las sesiones propias y no está disponible p
   }
 });
 
+test('delete_classroom: solo el propietario, solo sesiones cerradas y borra todo en cascada', async () => {
+  const t = await createDb();
+  try {
+    await t.as(IDS.teacherA, false);
+    const room = await t.call<ClassroomSession>('create_classroom', ['Para borrar']);
+    const work = await t.call<string>('add_classwork', [room.id, 'Trabajo', '']);
+    await t.call('set_classwork_state', [work, 'open']);
+    await t.as(IDS.studentOne, true);
+    await t.call('join_classroom', [room.code, 'Ana']);
+    await t.call('submit_score', [work, 7]);
+
+    // Una sesión activa no se borra, ni siquiera su propietario: hay que cerrarla antes.
+    await t.as(IDS.teacherA, false);
+    await assert.rejects(t.call('delete_classroom', [room.id]), /session_not_closed/);
+    await t.call('close_classroom', [room.id]);
+
+    // Ni otro profesor, ni un alumno, ni una sesión que no existe: el mismo access_denied.
+    await t.as(IDS.teacherB, false);
+    await assert.rejects(t.call('delete_classroom', [room.id]), /access_denied/);
+    await t.as(IDS.studentOne, true);
+    await assert.rejects(t.call('delete_classroom', [room.id]), /access_denied/);
+    await t.as(IDS.teacherA, false);
+    await assert.rejects(t.call('delete_classroom', ['00000000-0000-0000-0000-000000000000']), /access_denied/);
+
+    // Los intentos ajenos no han borrado nada.
+    await t.asOwner();
+    const count = async (table: string, column: string) =>
+      (await t.db.query<{ n: number }>(`SELECT count(*)::int AS n FROM nota_private.${table} WHERE ${column} = $1`, [room.id])).rows[0]!.n;
+    assert.deepEqual(
+      [await count('classrooms', 'id'), await count('participants', 'classroom_id'), await count('works', 'classroom_id'), await count('votes', 'classroom_id')],
+      [1, 1, 1, 1],
+    );
+
+    // El propietario sí puede, y se borra todo lo que cuelga de la sesión.
+    await t.as(IDS.teacherA, false);
+    await t.call('delete_classroom', [room.id]);
+    await t.asOwner();
+    assert.deepEqual(
+      [await count('classrooms', 'id'), await count('participants', 'classroom_id'), await count('works', 'classroom_id'), await count('votes', 'classroom_id')],
+      [0, 0, 0, 0],
+    );
+
+    // Efectos visibles: desaparece de su lista, el código ya no existe y el alumno pierde el acceso.
+    await t.as(IDS.teacherA, false);
+    assert.deepEqual(await t.call<ClassroomSession[]>('list_classrooms'), []);
+    await t.as(IDS.studentOne, true);
+    await assert.rejects(t.call('join_classroom', [room.code, 'Ana']), /session_not_found/);
+    await assert.rejects(t.call('classroom_snapshot', [room.id]), /access_denied/);
+
+    // Sin sesión iniciada (rol anon) no hay permiso de ejecución.
+    await t.asOwner();
+    await t.db.exec('SET ROLE anon');
+    await assert.rejects(t.call('delete_classroom', [room.id]), /permission denied/);
+  } finally {
+    await t.db.close();
+  }
+});
+
 test('acceso a sesiones: código, alias, propietario y sesión cerrada', async () => {
   const t = await createDb();
   try {

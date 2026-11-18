@@ -75,3 +75,17 @@
 - **Reversible:** se puede devolver a 30 en el mismo panel.
 - **Sin probar:** que el límite nuevo funcione en la práctica. Comprobarlo exigiría crear más de 30 alumnos anónimos desde una IP y dejaría más datos de prueba.
 - **No confundir** con un tope de alumnos por sesión: la app y la base de datos no limitan cuántos alumnos entran en una sesión.
+
+## ADR-012: Borrado de sesiones, solo si están cerradas y solo por su propietario
+- **Fecha:** 2026-11-18
+- **Estado:** Función añadida a petición del usuario («mete una opción de borrar sesión»). Amplía el alcance original, que no la incluía.
+- **Decisión:** nueva función del servidor `delete_classroom` (migración 003) y botón «Borrar sesión» en el panel del profesor, con confirmación.
+- **Reglas, impuestas por el servidor:**
+  - Solo el propietario. Cualquier otro (otro profesor, un alumno, una sesión inexistente) recibe el mismo `access_denied`, sin revelar si existe.
+  - **Solo sesiones cerradas** (`session_not_closed`). Motivo: evitar que se destruya por error una votación en curso; hay que cerrarla antes, y el cierre ya es irreversible por diseño. Es una regla mía, no pedida; se puede quitar si se prefiere borrar sesiones activas.
+  - Borrado en cascada de participantes, trabajos y votos (claves foráneas `on delete cascade`). **Irreversible.**
+  - Se serializa con el resto de operaciones bloqueando la fila de la sesión.
+- **Interfaz:** el botón solo aparece con la sesión cerrada, pide confirmación y, si el servidor borra, vuelve a «Mis sesiones».
+- **Comprobado:** prueba con PostgreSQL real (sesión activa, otro profesor, alumno, id inexistente, cascada, efectos visibles y rol `anon`), 17 de 17 pruebas, comprobación por mutación (sin la regla de sesión cerrada la prueba falla) y bundle de Android exportado.
+- **NO comprobado:** que la migración esté aplicada en el Supabase real del proyecto (hay que ejecutarla en el *SQL Editor*; ver `SUPABASE_SETUP.md`), ni el botón en el móvil.
+- **Contrapartida:** una acción destructiva más en la interfaz. No hay papelera ni deshacer.

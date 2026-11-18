@@ -2,7 +2,7 @@
 
 Aplicación móvil en **React Native (Expo + TypeScript)** para que los alumnos voten la nota de los trabajos que se presentan en clase. Referencia funcional: https://pollunit.com/es/vota
 
-- **Profesor:** inicia sesión, crea una sesión de clase (con código), añade trabajos, abre y cierra la votación de cada uno, ve cuántos han votado y, al cerrar, la media.
+- **Profesor:** inicia sesión, crea una sesión de clase (con código), añade trabajos, abre y cierra la votación de cada uno, ve cuántos han votado y, al cerrar, la media. Una sesión cerrada se puede borrar (irreversible).
 - **Alumno:** entra con el código y un alias, ve el trabajo que se está votando, elige una nota entera de 0 a 10 y la confirma. El voto solo cuenta cuando el servidor lo acepta.
 
 > **Estado:** consulta [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md). Ahí se distingue lo escrito, lo comprobado con pruebas y lo probado en un móvil.
