@@ -1,8 +1,8 @@
 # Estado del proyecto
-Actualizado: 2026-11-17
-Rama actual: docs/delivery (apilada: chore/native-foundation → feat/secure-voting → feat/native-classroom → docs/delivery)
+Actualizado: 2026-11-18
+Rama actual: docs/status-after-merge (creada desde `main` tras fusionar los cuatro PR)
 Último commit: ver `git log --oneline -1`
-Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `chore/native-foundation` d414da7, `feat/secure-voting` 00b4d63, `feat/native-classroom` 80d4406, `docs/delivery` 9d99e1f (los commits posteriores a este archivo se comprueban con ese mismo comando; un commit local no equivale a estar subido).
+`main` en `4e85f1d` (verificado con `git ls-remote --heads origin` el 2026-11-18): contiene las cuatro ramas de trabajo, que se conservan en el remoto. Un commit local no equivale a estar subido; comprobarlo siempre con ese comando.
 
 ## Requisitos y permisos confirmados
 - React Native obligatorio, entrega en ≤ 2 días; prioridad: estructura por componentes, claridad y funcionamiento.
@@ -37,13 +37,19 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
 - Prueba en Android (Expo Go) con dos dispositivos o instancias; APK solo si se exige.
 - README y guion de demostración (`docs/DEMO.md`) escritos, pero el guion **nunca se ha ejecutado** en un móvil; revisarlos tras la primera prueba real. Revisión de accesibilidad en dispositivo pendiente.
 - Decidir si se cierra el registro abierto de Supabase (no se ha podido confirmar que no bloquee la entrada anónima) o se añade una lista de profesores autorizados.
-- **Integración de ramas:** abiertos 4 PR apilados, **ninguno fusionado**. `main` se creó en el remoto en `e2587a4` (primer commit del proyecto, único ancestro común válido) y la rama predeterminada del repositorio sigue siendo `chore/native-foundation`.
-  1. [#1](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/1) `chore/native-foundation` → `main`
-  2. [#2](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/2) `feat/secure-voting` → `chore/native-foundation`
-  3. [#3](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/3) `feat/native-classroom` → `feat/secure-voting`
-  4. [#4](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/4) `docs/delivery` → `feat/native-classroom`
+- **Rama predeterminada del repositorio:** sigue siendo `chore/native-foundation`. Cambiarla a `main` en *Settings → Branches* (acción del usuario) para que la página principal de GitHub muestre el proyecto completo y no solo la base.
 
-  Integrar en ese orden. Al fusionar #1, cambiar la rama predeterminada a `main` en *Settings → Branches*.
+## Integración en `main` (hecha el 2026-11-18)
+`main` se creó en `e2587a4` (primer commit del proyecto, único ancestro común válido para los PR). Se fusionaron los cuatro PR apilados con «merge commit» (conserva los 30 commits pequeños) y sin borrar ramas. Tras fusionar cada uno hubo que cambiar la base del siguiente a `main`.
+
+| PR | Rama | Commit de fusión |
+|---|---|---|
+| [#1](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/1) | `chore/native-foundation` | `3bef847` |
+| [#2](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/2) | `feat/secure-voting` | `8a95727` |
+| [#3](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/3) | `feat/native-classroom` | `dc07435` |
+| [#4](https://github.com/CACHUMBAS/Nota-Online---React-Native/pull/4) | `docs/delivery` | `4e85f1d` |
+
+Verificado con Git: las cuatro ramas están contenidas en `origin/main` y el árbol de `main` en `4e85f1d` es idéntico al de `docs/delivery`. Este archivo se actualizó en la rama `docs/status-after-merge`.
 
 ## Bloqueos que requieren al usuario
 1. (Hecho) Proyecto Supabase dedicado creado y `.env` rellenado.
@@ -51,8 +57,8 @@ Ramas en GitHub, verificadas con `git ls-remote --heads origin` el 2026-11-17: `
 3. Confirmar si se exige APK.
 
 ## Siguiente paso concreto
-- Con el Supabase creado: aplicar las dos migraciones, crear la cuenta de profesor y probar el recorrido completo (profesor ↔ alumno) con `npx expo start`.
-- Tras la primera prueba real: corregir lo que falle, actualizar README/DEMO/este archivo y fusionar los PR #1 a #4 en orden (ver «No terminado»).
+- Probar lo que falta: caso «Sin votos» en pantalla, cortar la red al votar y otros tamaños de pantalla; después revisar `docs/DEMO.md` con lo que se observe.
+- Decidir con el profesor si se exige un APK (EAS Build o compilación local) y cambiar la rama predeterminada a `main`.
 
 ## Limitaciones conocidas
 - Un voto por identidad anónima no garantiza un voto por persona (borrar datos de la app o cambiar de identidad permite votar otra vez).
