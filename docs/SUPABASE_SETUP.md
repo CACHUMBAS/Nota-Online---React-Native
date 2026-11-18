@@ -21,7 +21,7 @@ Se hace **tres veces, en este orden**, con un archivo cada vez (si tu proyecto y
 2. Abre en tu ordenador `supabase/migrations/202611170001_classroom.sql`, selecciona todo (`Ctrl+A`), copia (`Ctrl+C`), pega en el editor de Supabase y pulsa **Run**.
    - Resultado esperado: *Success. No rows returned*.
 3. Repite con una consulta nueva (*New query*) para `supabase/migrations/202611170002_list_classrooms.sql`.
-4. Repite otra vez para `supabase/migrations/202611180003_delete_classroom.sql` (es la que activa el botón **Borrar sesión**; sin ella el botón dará error).
+4. Repite otra vez para `supabase/migrations/202611180003_delete_classroom.sql` (es la que activa el botón **Borrar sesión**; sin ella el botón dará error). El editor avisará de «operaciones destructivas» por el texto `delete from` del cuerpo de la función: es normal, la migración solo define la función y no borra nada al ejecutarse; confirma el aviso.
 
 Comprobación: *Database → Functions* debe listar `create_classroom`, `add_classwork`, `set_classwork_state`, `close_classroom`, `join_classroom`, `submit_score`, `classroom_snapshot`, `list_classrooms` y `delete_classroom`. En *Table Editor* no verás tablas de la app: están a propósito en un esquema privado.
 

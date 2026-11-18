@@ -87,5 +87,7 @@
   - Se serializa con el resto de operaciones bloqueando la fila de la sesión.
 - **Interfaz:** el botón solo aparece con la sesión cerrada, pide confirmación y, si el servidor borra, vuelve a «Mis sesiones».
 - **Comprobado:** prueba con PostgreSQL real (sesión activa, otro profesor, alumno, id inexistente, cascada, efectos visibles y rol `anon`), 17 de 17 pruebas, comprobación por mutación (sin la regla de sesión cerrada la prueba falla) y bundle de Android exportado.
-- **NO comprobado:** que la migración esté aplicada en el Supabase real del proyecto (hay que ejecutarla en el *SQL Editor*; ver `SUPABASE_SETUP.md`), ni el botón en el móvil.
+- **Comprobado después, contra el Supabase real (2026-11-18):** la migración se aplicó en el *SQL Editor* y se verificó desde fuera (sin sesión 401, antes 404; un alumno con un id inexistente recibe `access_denied`). El usuario probó el botón en su móvil y funciona (comprobado por el usuario, no observado por Claude), y Claude verificó en el servidor que la sesión borrada ya no existe (`session_not_found`).
+- **Aviso al aplicarla:** el SQL Editor muestra «This query includes destructive operations» por el texto `delete from` del cuerpo de la función; la migración solo la define y no borra nada al ejecutarse. Hay que confirmar ese aviso.
+- **Sin probar:** el rechazo de borrar una sesión **activa** y el de otro profesor se probaron con PostgreSQL en memoria, pero no contra el servidor real.
 - **Contrapartida:** una acción destructiva más en la interfaz. No hay papelera ni deshacer.
